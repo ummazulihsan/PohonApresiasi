@@ -8,192 +8,207 @@
         :root {
             --leaf-green: #2d6a4f;
             --apple-red: #e63946;
-            --sky-blue: #f0f9ff;
+            --sky-top: #a2d2ff;
+            --sky-bottom: #caf0f8;
+            --grass-green: #70e000;
             --trunk-brown: #5d4037;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             margin: 0; padding: 0;
-            background-color: var(--sky-blue);
-            color: #333;
+            background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
         /* Navigasi Halaman */
         .page {
-            display: none; /* Sembunyikan semua halaman di awal */
+            display: none;
             min-height: 100vh;
             flex-direction: column;
             align-items: center;
             padding: 20px;
             box-sizing: border-box;
+            position: relative;
+        }
+        .active { display: flex; animation: fadeIn 0.8s ease-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- DEKORASI BACKGROUND (AWAN & RUMPUT) --- */
+        .cloud {
+            position: absolute; background: white; border-radius: 50px;
+            opacity: 0.8; z-index: 0; animation: float 20s linear infinite;
+        }
+        .cloud::after, .cloud::before {
+            content: ''; position: absolute; background: white; border-radius: 50%;
+        }
+        .cloud:nth-child(1) { width: 100px; height: 40px; top: 10%; left: -150px; }
+        .cloud:nth-child(2) { width: 140px; height: 50px; top: 25%; left: -200px; animation-delay: 5s; }
+
+        @keyframes float {
+            from { transform: translateX(-10vw); }
+            to { transform: translateX(110vw); }
         }
 
-        .active { display: flex; animation: fadeIn 0.5s; }
+        .grass {
+            position: absolute; bottom: 0; width: 100%; height: 80px;
+            background: var(--grass-green); z-index: 1;
+            border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* --- STYLING HALAMAN 1 (FORM) --- */
+        /* --- STYLING KARTU INPUT --- */
         .card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 450px;
-            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px; border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%; max-width: 450px;
+            z-index: 10; backdrop-filter: blur(5px);
+            margin-top: 20px;
         }
 
-        h1 { color: var(--leaf-green); text-align: center; margin-bottom: 10px; }
+        h1 { color: var(--leaf-green); text-align: center; margin: 10px 0; text-shadow: 1px 1px 0 white; }
         .quote-box {
-            text-align: center;
-            font-style: italic;
-            color: #555;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            font-size: 0.95rem;
-            border-left: 4px solid var(--leaf-green);
-            padding-left: 15px;
+            text-align: center; font-style: italic; color: #444;
+            margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;
+            background: #f0fff4; padding: 15px; border-radius: 12px;
+            border: 1px dashed var(--leaf-green);
         }
 
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--leaf-green); }
         input, textarea {
-            width: 100%; padding: 12px;
-            border: 2px solid #eee; border-radius: 8px;
-            box-sizing: border-box; font-size: 1rem;
+            width: 100%; padding: 12px; border: 2px solid #ddd;
+            border-radius: 10px; box-sizing: border-box; font-size: 1rem;
         }
-        input:focus, textarea:focus { border-color: var(--leaf-green); outline: none; }
+        input:focus, textarea:focus { border-color: var(--leaf-green); outline: none; box-shadow: 0 0 8px rgba(45, 106, 79, 0.2); }
 
         .btn {
-            background: var(--leaf-green); color: white;
-            border: none; padding: 15px; border-radius: 8px;
-            width: 100%; font-size: 1rem; font-weight: bold;
-            cursor: pointer; transition: 0.3s; margin-top: 10px;
+            background: var(--leaf-green); color: white; border: none;
+            padding: 15px; border-radius: 10px; width: 100%;
+            font-size: 1rem; font-weight: bold; cursor: pointer;
+            transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .btn:hover { background: #1b4332; transform: translateY(-2px); }
-        .btn-secondary { background: #777; margin-top: 20px; }
+        .btn:hover { background: #1b4332; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .btn-secondary { background: #6c757d; margin-top: 15px; }
 
-        /* --- STYLING HALAMAN 2 (POHON) --- */
+        /* --- STYLING POHON & APEL --- */
         #tree-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            height: 550px;
-            margin-top: 20px;
+            position: relative; width: 100%; max-width: 800px;
+            height: 550px; z-index: 5; margin-bottom: 20px;
         }
 
-        #tree-svg { width: 100%; height: 100%; }
+        #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
 
         .apple-wrapper {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            z-index: 10;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute; transform: translate(-50%, -50%);
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
         }
-        .apple-wrapper:hover { transform: translate(-50%, -50%) scale(1.2); }
+        .apple-wrapper:hover { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); }
+
         .apple-label {
-            position: absolute; top: 55%; left: 50%;
+            position: absolute; top: 58%; left: 50%;
             transform: translate(-50%, -50%);
-            color: white; font-weight: bold; font-size: 10px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            color: white; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
             pointer-events: none; text-align: center; width: 100%;
+            line-height: 0.9;
         }
 
-        /* Popup Modal */
+        /* --- MODAL --- */
         #modal {
-            display: none; position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 100;
-            justify-content: center; align-items: center;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            z-index: 100; justify-content: center; align-items: center;
+            backdrop-filter: blur(3px);
         }
         .modal-content {
-            background: white; padding: 25px; border-radius: 15px;
-            max-width: 400px; width: 90%; max-height: 70vh; overflow-y: auto;
+            background: white; padding: 30px; border-radius: 20px;
+            max-width: 450px; width: 90%; max-height: 75vh; overflow-y: auto;
+            position: relative; border-top: 10px solid var(--apple-red);
         }
-        .msg-card { border-bottom: 1px solid #eee; padding: 10px 0; }
-        .msg-card:last-child { border: none; }
-        .msg-sender { font-size: 0.8rem; color: #888; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="grass"></div>
+
     <div id="page-form" class="page active">
-        <h1>🍎 Beri Apresiasi</h1>
+        <h1>🍎 Kirim Apresiasi</h1>
         <div class="card">
             <div class="quote-box">
-                "Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis bagi sesama."
+                "Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis."
             </div>
             
             <div class="input-group">
                 <label>Nama Pengirim</label>
-                <input type="text" id="in-pengirim" placeholder="Nama Anda">
+                <input type="text" id="in-pengirim" placeholder="Siapa namamu?">
             </div>
             <div class="input-group">
                 <label>Penerima Apresiasi</label>
-                <input type="text" id="in-penerima" placeholder="Nama Rekan Kerja">
+                <input type="text" id="in-penerima" placeholder="Nama rekan yang diapresiasi">
             </div>
             <div class="input-group">
-                <label>Pesan Singkat</label>
-                <textarea id="in-pesan" placeholder="Tuliskan apresiasi tulusmu..."></textarea>
+                <label>Pesan Apresiasi</label>
+                <textarea id="in-pesan" placeholder="Ceritakan hal baik yang mereka lakukan..."></textarea>
             </div>
-            <button class="btn" onclick="submitApresiasi()">Kirim Kebaikan 🍎</button>
-            <button class="btn btn-secondary" onclick="showPage('page-tree')">Lihat Pohon Apresiasi →</button>
-            <div id="status" style="margin-top:10px; text-align:center; font-size:14px;"></div>
+            <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon 🍎</button>
+            <button class="btn btn-secondary" onclick="showPage('page-tree')">Lihat Pohon Kebaikan →</button>
+            <div id="status" style="margin-top:10px; text-align:center; font-weight:bold;"></div>
         </div>
     </div>
 
     <div id="page-tree" class="page">
-        <h1>🌳 Pohon Kebaikan</h1>
-        <p style="color:#666; margin-top:0;">Klik pada buah untuk melihat pesan apresiasi</p>
-        
+        <h1>🌳 Pohon Apresiasi Kita</h1>
         <div id="tree-container">
             <svg id="tree-svg" viewBox="0 0 500 500">
-                <path d="M230,500 L270,500 L260,300 L240,300 Z" fill="#5d4037"/>
-                <circle cx="250" cy="220" r="110" fill="#2d6a4f"/>
-                <circle cx="170" cy="280" r="95" fill="#2d6a4f"/>
-                <circle cx="330" cy="280" r="95" fill="#2d6a4f"/>
-                <circle cx="250" cy="140" r="80" fill="#1b4332"/>
+                <path d="M235,500 L265,500 L260,320 L240,320 Z" fill="#4e342e"/>
+                <path d="M245,350 L220,380 M255,360 L280,390" stroke="#3e2723" stroke-width="3"/>
+                <circle cx="250" cy="230" r="105" fill="#1b4332"/>
+                <circle cx="180" cy="280" r="90" fill="#2d6a4f"/>
+                <circle cx="320" cy="280" r="90" fill="#2d6a4f"/>
+                <circle cx="250" cy="150" r="80" fill="#409167" opacity="0.9"/>
+                <circle cx="200" cy="200" r="70" fill="#52b788" opacity="0.6"/>
+                <circle cx="300" cy="200" r="70" fill="#52b788" opacity="0.6"/>
             </svg>
             <div id="apples-layer"></div>
         </div>
-
-        <button class="btn" style="max-width:200px;" onclick="showPage('page-form')">← Beri Apresiasi Lagi</button>
+        <button class="btn" style="max-width:250px; z-index:10;" onclick="showPage('page-form')">← Beri Apresiasi Lagi</button>
     </div>
 
     <div id="modal" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 id="modal-name" style="color:var(--apple-red); margin-top:0;"></h2>
+            <h2 id="modal-name" style="color:var(--apple-red); margin:0 0 15px 0; border-bottom: 2px solid #eee;"></h2>
             <div id="modal-list"></div>
-            <button class="btn" style="margin-top:20px" onclick="document.getElementById('modal').style.display='none'">Tutup</button>
+            <button class="btn" onclick="document.getElementById('modal').style.display='none'">Tutup</button>
         </div>
     </div>
 
     <script>
-        // === GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA ===
+        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
         const API_URL = 'https://script.google.com/macros/s/AKfycbz1ZA0ymK88e9c2i-bwHspwjOdShr_xnk--FHDTV9QqXVJUxefdzwr_lpEL868v-dftFQ/exec';
 
         let allData = [];
 
-        // Navigasi antar halaman
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if(pageId === 'page-tree') loadTreeData();
         }
 
-        // Kirim Data
         function submitApresiasi() {
-            const pgr = document.getElementById('in-pengirim').value;
-            const pnr = document.getElementById('in-penerima').value;
-            const psn = document.getElementById('in-pesan').value;
+            const pgr = document.getElementById('in-pengirim').value.trim();
+            const pnr = document.getElementById('in-penerima').value.trim();
+            const psn = document.getElementById('in-pesan').value.trim();
             const stat = document.getElementById('status');
 
-            if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
+            if(!pgr || !pnr || !psn) return alert("Lengkapi semua kolom ya!");
 
-            stat.innerText = "Mengirim...";
+            stat.innerText = "Sedang mengirim keajaiban...";
+            stat.style.color = "#444";
             
             const body = new FormData();
             body.append('Pengirim', pgr);
@@ -202,75 +217,88 @@
 
             fetch(API_URL, { method: 'POST', body: body, mode: 'no-cors' })
                 .then(() => {
-                    stat.style.color = "green";
-                    stat.innerText = "Berhasil dikirim! Membuka pohon...";
+                    stat.style.color = "var(--leaf-green)";
+                    stat.innerText = "🍎 Terkirim! Menuju ke pohon...";
                     setTimeout(() => {
                         document.getElementById('in-pengirim').value = '';
                         document.getElementById('in-penerima').value = '';
                         document.getElementById('in-pesan').value = '';
+                        stat.innerText = "";
                         showPage('page-tree');
                     }, 1500);
                 })
                 .catch(() => {
                     stat.style.color = "red";
-                    stat.innerText = "Gagal mengirim. Cek koneksi.";
+                    stat.innerText = "Waduh, koneksi terputus. Coba lagi ya.";
                 });
         }
 
-        // Ambil Data & Render Pohon
         async function loadTreeData() {
             const layer = document.getElementById('apples-layer');
-            layer.innerHTML = "Memuat buah...";
+            layer.innerHTML = "<p style='text-align:center; padding-top:100px;'>Mencari buah di dahan...</p>";
 
             try {
                 const res = await fetch(API_URL);
                 allData = await res.json();
                 
-                // Hitung jumlah apresiasi per nama
+                // CASE INSENSITIVE LOGIC
                 const summary = {};
+                const displayNames = {}; // Simpan nama asli untuk tampilan
+
                 allData.forEach(d => {
-                    if(d.Penerima) summary[d.Penerima] = (summary[d.Penerima] || 0) + 1;
+                    if(d.Penerima) {
+                        const lowName = d.Penerima.toLowerCase().trim();
+                        summary[lowName] = (summary[lowName] || 0) + 1;
+                        
+                        // Simpan format nama tercantik (huruf depan kapital)
+                        if (!displayNames[lowName]) {
+                            displayNames[lowName] = d.Penerima.split(' ')
+                                .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                                .join(' ');
+                        }
+                    }
                 });
 
                 layer.innerHTML = "";
-                Object.keys(summary).forEach((nama, i) => {
-                    renderApple(nama, summary[nama], i);
+                Object.keys(summary).forEach((lowName, i) => {
+                    renderApple(displayNames[lowName], summary[lowName], i);
                 });
             } catch(e) {
-                layer.innerHTML = "Gagal memuat pohon.";
+                layer.innerHTML = "<p style='text-align:center; color:red;'>Gagal memuat pohon.</p>";
             }
         }
 
-        function renderApple(name, count, index) {
+        function renderApple(displayName, count, index) {
             const layer = document.getElementById('apples-layer');
-            const size = Math.min(45 + (count * 12), 110);
+            const size = Math.min(45 + (count * 15), 120);
             
             const wrapper = document.createElement('div');
             wrapper.className = 'apple-wrapper';
             
-            // ALGORITMA PENEMPATAN NATURAL (Hanya di rimbun daun)
-            // Area Daun Utama (Dalam % terhadap container)
-            // Kita gunakan beberapa koordinat pusat daun agar lebih natural
-            const centers = [
-                {x: 50, y: 44}, {x: 34, y: 56}, {x: 66, y: 56}, {x: 50, y: 28}
+            // TITIK KOORDINAT DAUN (X, Y dlm %)
+            const spots = [
+                {x: 50, y: 40}, {x: 35, y: 55}, {x: 65, y: 55}, {x: 50, y: 25},
+                {x: 25, y: 50}, {x: 75, y: 50}, {x: 40, y: 35}, {x: 60, y: 35}
             ];
-            const base = centers[index % centers.length];
-            const offsetX = (Math.sin(index * 1.5) * 15); // Variasi posisi
-            const offsetY = (Math.cos(index * 1.5) * 15);
             
-            wrapper.style.left = (base.x + offsetX) + '%';
-            wrapper.style.top = (base.y + offsetY) + '%';
+            const spot = spots[index % spots.length];
+            const jitterX = (Math.sin(index) * 12);
+            const jitterY = (Math.cos(index) * 12);
+            
+            wrapper.style.left = (spot.x + jitterX) + '%';
+            wrapper.style.top = (spot.y + jitterY) + '%';
             
             wrapper.innerHTML = `
                 <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <path d="M50,15 C50,5 55,5 55,15" stroke="#4a3000" stroke-width="4" fill="none"/>
-                    <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="#e63946"/>
-                    <circle cx="35" cy="35" r="8" fill="white" opacity="0.2"/>
+                    <path d="M50,15 Q55,0 60,15" stroke="#3e2723" stroke-width="4" fill="none"/>
+                    <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
+                    <path d="M52,15 Q70,5 65,20 Q60,25 52,15" fill="#70e000"/>
+                    <ellipse cx="30" cy="35" rx="6" ry="10" fill="white" opacity="0.3" transform="rotate(-30 30 35)"/>
                 </svg>
-                <div class="apple-label" style="font-size: ${Math.max(8, size/8)}px">${name}</div>
+                <div class="apple-label" style="font-size: ${Math.max(9, size/7)}px">${displayName}</div>
             `;
 
-            wrapper.onclick = () => showDetail(name);
+            wrapper.onclick = () => showDetail(displayName);
             layer.appendChild(wrapper);
         }
 
@@ -280,11 +308,15 @@
             document.getElementById('modal-name').innerText = name;
             
             list.innerHTML = "";
-            allData.filter(d => d.Penerima === name).forEach(m => {
+            // Filter dengan case-insensitive
+            const filtered = allData.filter(d => d.Penerima && d.Penerima.toLowerCase().trim() === name.toLowerCase().trim());
+            
+            filtered.reverse().forEach(m => {
                 const div = document.createElement('div');
-                div.className = 'msg-card';
-                div.innerHTML = `<p style="margin:0 0 5px 0">"${m.Ucapan}"</p>
-                                 <p class="msg-sender">Dari: ${m.Pengirim}</p>`;
+                div.style.padding = "15px 0";
+                div.style.borderBottom = "1px solid #eee";
+                div.innerHTML = `<p style="margin:0 0 8px 0; line-height:1.4; font-size:1.1rem;">"${m.Ucapan}"</p>
+                                 <p style="margin:0; font-size:0.85rem; color:#666;">Dari: <b>${m.Pengirim}</b></p>`;
                 list.appendChild(div);
             });
             modal.style.display = 'flex';
