@@ -6,466 +6,288 @@
     <title>Pohon Apresiasi Digital</title>
     <style>
         :root {
-            --trink-brown: #8b4513;
             --leaf-green: #2d6a4f;
             --apple-red: #e63946;
             --sky-blue: #f0f9ff;
+            --trunk-brown: #5d4037;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0;
             background-color: var(--sky-blue);
             color: #333;
-            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Navigasi Halaman */
+        .page {
+            display: none; /* Sembunyikan semua halaman di awal */
+            min-height: 100vh;
             flex-direction: column;
             align-items: center;
-        }
-
-        header {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        h1 { color: var(--leaf-green); margin-bottom: 5px; }
-        p.subtitle { margin-top: 0; color: #666; }
-
-        /* Bagian Formulir Input */
-        #input-section {
-            background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            width: 90%;
-            max-width: 500px;
-            text-align: left;
+            box-sizing: border-box;
+        }
+
+        .active { display: flex; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- STYLING HALAMAN 1 (FORM) --- */
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            margin-top: 40px;
+        }
+
+        h1 { color: var(--leaf-green); text-align: center; margin-bottom: 10px; }
+        .quote-box {
+            text-align: center;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            border-left: 4px solid var(--leaf-green);
+            padding-left: 15px;
         }
 
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--leaf-green); }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box; /* Penting agar padding tidak merusak width */
-            font-family: inherit;
+        input, textarea {
+            width: 100%; padding: 12px;
+            border: 2px solid #eee; border-radius: 8px;
+            box-sizing: border-box; font-size: 1rem;
         }
-        textarea { resize: vertical; height: 80px; }
-        input[type="text"]:focus, textarea:focus {
-            border-color: var(--leaf-green);
-            outline: none;
+        input:focus, textarea:focus { border-color: var(--leaf-green); outline: none; }
+
+        .btn {
+            background: var(--leaf-green); color: white;
+            border: none; padding: 15px; border-radius: 8px;
+            width: 100%; font-size: 1rem; font-weight: bold;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
         }
+        .btn:hover { background: #1b4332; transform: translateY(-2px); }
+        .btn-secondary { background: #777; margin-top: 20px; }
 
-        button#submitBtn {
-            background-color: var(--leaf-green);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            transition: background 0.3s;
-        }
-        button#submitBtn:hover { background-color: #1a4331; }
-        button#submitBtn:disabled { background-color: #ccc; cursor: not-allowed; }
-
-        #status-message { text-align: center; margin-top: 10px; font-size: 14px; }
-
-        /* Container Utama Pohon */
-        #tree-area {
+        /* --- STYLING HALAMAN 2 (POHON) --- */
+        #tree-container {
             position: relative;
             width: 100%;
             max-width: 800px;
-            height: 600px;
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 40px;
+            height: 550px;
+            margin-top: 20px;
         }
 
-        /* Gambar Pohon sebagai Background (menggunakan SVG inline agar tidak perlu file eksternal) */
-        #tree-bg {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: auto;
-            max-height: 90%;
-            z-index: 1;
-            opacity: 0.8;
-        }
+        #tree-svg { width: 100%; height: 100%; }
 
-        /* Container untuk buah apel agar berada di atas pohon */
-        #apples-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2; /* Di atas #tree-bg */
-        }
-
-        /* Styling Buah Apel (SVG) */
         .apple-wrapper {
             position: absolute;
-            transform: translate(-50%, -50%); /* Center point */
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animasi pop-up */
-            text-align: center;
-        }
-
-        .apple-wrapper:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-            z-index: 10;
-        }
-
-        /* Nama di dalam/bawah apel */
-        .apple-label {
-            position: absolute;
-            top: 55%; /* Di tengah apel */
-            left: 50%;
             transform: translate(-50%, -50%);
-            color: white;
-            font-size: 11px;
-            font-weight: bold;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            pointer-events: none; /* Klik tembus ke apel */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 90%;
-        }
-
-        /* Pop-up Pesan (Modal) */
-        #message-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        #close-modal {
-            position: absolute;
-            top: 10px; right: 15px;
-            font-size: 24px;
             cursor: pointer;
-            color: #aaa;
+            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .apple-wrapper:hover { transform: translate(-50%, -50%) scale(1.2); }
+        .apple-label {
+            position: absolute; top: 55%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white; font-weight: bold; font-size: 10px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            pointer-events: none; text-align: center; width: 100%;
         }
 
-        #modal-recipient { color: var(--apple-red); margin-top: 0; }
-        
-        .message-item {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
+        /* Popup Modal */
+        #modal {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 100;
+            justify-content: center; align-items: center;
         }
-        .message-text { font-style: italic; margin-bottom: 5px; }
-        .message-sender { font-size: 12px; color: #777; font-weight: bold; }
-
+        .modal-content {
+            background: white; padding: 25px; border-radius: 15px;
+            max-width: 400px; width: 90%; max-height: 70vh; overflow-y: auto;
+        }
+        .msg-card { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .msg-card:last-child { border: none; }
+        .msg-sender { font-size: 0.8rem; color: #888; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>🌳 Pohon Apresiasi</h1>
-        <p class="subtitle">Tumbuhkan semangat dengan pujian tulus</p>
-    </header>
-
-    <section id="input-section">
-        <div class="input-group">
-            <label>Namamu (Pengirim)</label>
-            <input type="text" id="senderInput" placeholder="Contoh: Andi">
+    <div id="page-form" class="page active">
+        <h1>🍎 Beri Apresiasi</h1>
+        <div class="card">
+            <div class="quote-box">
+                "Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis bagi sesama."
+            </div>
+            
+            <div class="input-group">
+                <label>Nama Pengirim</label>
+                <input type="text" id="in-pengirim" placeholder="Nama Anda">
+            </div>
+            <div class="input-group">
+                <label>Penerima Apresiasi</label>
+                <input type="text" id="in-penerima" placeholder="Nama Rekan Kerja">
+            </div>
+            <div class="input-group">
+                <label>Pesan Singkat</label>
+                <textarea id="in-pesan" placeholder="Tuliskan apresiasi tulusmu..."></textarea>
+            </div>
+            <button class="btn" onclick="submitApresiasi()">Kirim Kebaikan 🍎</button>
+            <button class="btn btn-secondary" onclick="showPage('page-tree')">Lihat Pohon Apresiasi →</button>
+            <div id="status" style="margin-top:10px; text-align:center; font-size:14px;"></div>
         </div>
-        <div class="input-group">
-            <label>Nama Rekan Tim (Penerima)</label>
-            <input type="text" id="recipientInput" placeholder="Contoh: Budi">
+    </div>
+
+    <div id="page-tree" class="page">
+        <h1>🌳 Pohon Kebaikan</h1>
+        <p style="color:#666; margin-top:0;">Klik pada buah untuk melihat pesan apresiasi</p>
+        
+        <div id="tree-container">
+            <svg id="tree-svg" viewBox="0 0 500 500">
+                <path d="M230,500 L270,500 L260,300 L240,300 Z" fill="#5d4037"/>
+                <circle cx="250" cy="220" r="110" fill="#2d6a4f"/>
+                <circle cx="170" cy="280" r="95" fill="#2d6a4f"/>
+                <circle cx="330" cy="280" r="95" fill="#2d6a4f"/>
+                <circle cx="250" cy="140" r="80" fill="#1b4332"/>
+            </svg>
+            <div id="apples-layer"></div>
         </div>
-        <div class="input-group">
-            <label>Ucapan Apresiasi</label>
-            <textarea id="messageInput" placeholder="Sebutkan hal positif yang dia lakukan..."></textarea>
-        </div>
-        <button id="submitBtn" onclick="sendData()">Kirim ke Pohon! 🍎</button>
-        <div id="status-message"></div>
-    </section>
 
-    <section id="tree-area">
-        <svg id="tree-bg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-            <path d="M220,500 L280,500 L260,250 L240,250 Z" fill="#8b4513"/>
-            <circle cx="250" cy="200" r="100" fill="#2d6a4f"/>
-            <circle cx="180" cy="250" r="90" fill="#2d6a4f"/>
-            <circle cx="320" cy="250" r="90" fill="#2d6a4f"/>
-            <circle cx="250" cy="120" r="70" fill="#2d6a4f"/>
-        </svg>
+        <button class="btn" style="max-width:200px;" onclick="showPage('page-form')">← Beri Apresiasi Lagi</button>
+    </div>
 
-        <div id="apples-container"></div>
-    </section>
-
-    <div id="message-modal">
-        <div id="modal-content">
-            <span id="close-modal" onclick="closeModal()">&times;</span>
-            <h2 id="modal-recipient">Nama Penerima</h2>
-            <div id="modal-messages-list">
-                </div>
+    <div id="modal" onclick="this.style.display='none'">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="modal-name" style="color:var(--apple-red); margin-top:0;"></h2>
+            <div id="modal-list"></div>
+            <button class="btn" style="margin-top:20px" onclick="document.getElementById('modal').style.display='none'">Tutup</button>
         </div>
     </div>
 
     <script>
-        // --- KONFIGURASI PENTING ---
-        // Ganti dengan URL dari Google Apps Script "Deploy as Web App" kamu
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1ZA0ymK88e9c2i-bwHspwjOdShr_xnk--FHDTV9QqXVJUxefdzwr_lpEL868v-dftFQ/exec'; 
-        // ---------------------------
+        // === GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA ===
+        const API_URL = 'https://script.google.com/macros/s/AKfycbz1ZA0ymK88e9c2i-bwHspwjOdShr_xnk--FHDTV9QqXVJUxefdzwr_lpEL868v-dftFQ/exec';
 
-        let rawDataApresiasi = []; // Menyimpan data mentah (pengirim, penerima, pesan)
-        let summaryApresiasi = {}; // Menyimpan hitungan jumlah apel per penerima
+        let allData = [];
 
-        // Templat SVG untuk satu buah apel
-        const appleSvgTemplate = (size, color) => `
-            <svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50,15 C50,5 55,5 55,15 L50,15" stroke="#6f4e37" stroke-width="5" fill="none"/>
-                <path d="M52,12 C60,5 70,10 65,18 C58,22 52,15 52,12" fill="#4caf50"/>
-                <path d="M50,90 C20,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 80,90 50,90 Z" fill="${color}"/>
-                <ellipse cx="30" cy="35" rx="8" ry="12" fill="white" opacity="0.3" transform="rotate(-30 30 35)"/>
-            </svg>
-        `;
+        // Navigasi antar halaman
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if(pageId === 'page-tree') loadTreeData();
+        }
 
-        // Fungsi saat halaman dimuat
-        window.onload = function() {
-            if (GOOGLE_SCRIPT_URL === 'URL_APP_SCRIPT_KAMU_DI_SINI') {
-                alert('PENTING: Ubah variabel GOOGLE_SCRIPT_URL di dalam kode index.html agar terhubung ke Google Sheets kamu.');
-                // Menggunakan data dummy jika URL belum diset
-                renderDummyData();
-            } else {
-                loadDataFromSheets();
-            }
-        };
+        // Kirim Data
+        function submitApresiasi() {
+            const pgr = document.getElementById('in-pengirim').value;
+            const pnr = document.getElementById('in-penerima').value;
+            const psn = document.getElementById('in-pesan').value;
+            const stat = document.getElementById('status');
 
-        // Fungsi mengambil data dari Google Sheets (GET)
-        async function loadDataFromSheets() {
-            const container = document.getElementById('apples-container');
-            container.innerHTML = '<div style="text-align:center; padding-top:100px; color:#666;">Memuat pohon...</div>';
+            if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
+
+            stat.innerText = "Mengirim...";
             
+            const body = new FormData();
+            body.append('Pengirim', pgr);
+            body.append('Penerima', pnr);
+            body.append('Ucapan', psn);
+
+            fetch(API_URL, { method: 'POST', body: body, mode: 'no-cors' })
+                .then(() => {
+                    stat.style.color = "green";
+                    stat.innerText = "Berhasil dikirim! Membuka pohon...";
+                    setTimeout(() => {
+                        document.getElementById('in-pengirim').value = '';
+                        document.getElementById('in-penerima').value = '';
+                        document.getElementById('in-pesan').value = '';
+                        showPage('page-tree');
+                    }, 1500);
+                })
+                .catch(() => {
+                    stat.style.color = "red";
+                    stat.innerText = "Gagal mengirim. Cek koneksi.";
+                });
+        }
+
+        // Ambil Data & Render Pohon
+        async function loadTreeData() {
+            const layer = document.getElementById('apples-layer');
+            layer.innerHTML = "Memuat buah...";
+
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                if (!response.ok) throw new Error('Gagal mengambil data');
+                const res = await fetch(API_URL);
+                allData = await res.json();
                 
-                rawDataApresiasi = await response.json();
-                processAndRenderData();
+                // Hitung jumlah apresiasi per nama
+                const summary = {};
+                allData.forEach(d => {
+                    if(d.Penerima) summary[d.Penerima] = (summary[d.Penerima] || 0) + 1;
+                });
 
-            } catch (error) {
-                console.error('Error:', error);
-                container.innerHTML = '<div style="text-align:center; padding-top:100px; color:red;">Gagal memuat data pohon. Pastikan URL Script benar dan akses set ke "Anyone".</div>';
+                layer.innerHTML = "";
+                Object.keys(summary).forEach((nama, i) => {
+                    renderApple(nama, summary[nama], i);
+                });
+            } catch(e) {
+                layer.innerHTML = "Gagal memuat pohon.";
             }
         }
 
-        // Fungsi mengirim data ke Google Sheets (POST via no-cors)
-        function sendData() {
-            const sender = document.getElementById('senderInput').value.trim();
-            const recipient = document.getElementById('recipientInput').value.trim();
-            const message = document.getElementById('messageInput').value.trim();
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('status-message');
-
-            if (!sender || !recipient || !message) {
-                alert('Mohon isi semua bidang (Pengirim, Penerima, dan Ucapan).');
-                return;
-            }
-
-            if (GOOGLE_SCRIPT_URL === 'URL_APP_SCRIPT_KAMU_DI_SINI') {
-                alert('Tidak bisa mengirim. URL Google Script belum diset.');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = 'Mengirim...';
-            status.innerText = 'Menghubungkan ke Sheets...';
-            status.style.color = '#666';
-
-            // Menggunakan metode form submission lawas karena Google Apps Script POST sering bermasalah dengan CORS di fetch
-            const formData = new FormData();
-            formData.append('Pengirim', sender);
-            formData.append('Penerima', recipient);
-            formData.append('Ucapan', message);
-
-            // Trik menggunakan mode: 'no-cors' agar bisa POST ke Google Script
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: formData,
-                mode: 'no-cors' 
-            })
-            .then(() => {
-                // Karena no-cors, kita tidak bisa baca response, tapi asumsi sukses jika tidak error
-                status.innerText = `Terima kasih! Apresiasi untuk ${recipient} telah dikirim. Refresh halaman untuk melihat hasilnya.`;
-                status.style.color = 'green';
-                
-                // Reset form
-                document.getElementById('senderInput').value = '';
-                document.getElementById('recipientInput').value = '';
-                document.getElementById('messageInput').value = '';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                status.innerText = 'Gagal mengirim data. Coba lagi nanti.';
-                status.style.color = 'red';
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.innerText = 'Kirim ke Pohon! 🍎';
-            });
-        }
-
-        // Memproses data mentah menjadi hitungan dan merender apel
-        function processAndRenderData() {
-            summaryApresiasi = {};
+        function renderApple(name, count, index) {
+            const layer = document.getElementById('apples-layer');
+            const size = Math.min(45 + (count * 12), 110);
             
-            // Hitung berapa banyak apresiasi per PENERIMA
-            rawDataApresiasi.forEach(item => {
-                if (item.Penerima) { // Pastikan field Penerima ada
-                    const nama = item.Penerima.trim();
-                    summaryApresiasi[nama] = (summaryApresiasi[nama] || 0) + 1;
-                }
-            });
-
-            renderApples();
-        }
-
-        // Merender buah apel ke pohon berdasarkan summary
-        function renderApples() {
-            const container = document.getElementById('apples-container');
-            container.innerHTML = ''; // Bersihkan container
-
-            const reciepientNames = Object.keys(summaryApresiasi);
-            if (reciepientNames.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding-top:100px; color:#666;">Belum ada apresiasi. Ayo jadi yang pertama mengirim!</div>';
-                return;
-            }
-
-            reciepientNames.forEach((name, index) => {
-                const count = summaryApresiasi[name];
-                
-                // --- LOGIKA UKURAN ---
-                // Ukuran dasar 50px, bertambah 15px setiap dapat apresiasi, maksimal 120px
-                const size = Math.min(50 + (count * 15), 120); 
-
-                const wrapper = document.createElement('div');
-                wrapper.className = 'apple-wrapper';
-                
-                // --- LOGIKA POSISI ---
-                // Menggunakan koordinat absolut agar apel menyebar di area daun pohon (sekitar y: 10% - 60%, x: 15% - 85%)
-                // Menggunakan seed 'index' agar posisi acak tapi konsisten saat refresh
-                const pos = getDeterministicRandomPosition(index, size);
-                wrapper.style.left = pos.x + '%';
-                wrapper.style.top = pos.y + '%';
-                
-                // Masukkan SVG Apel
-                wrapper.innerHTML = appleSvgTemplate(size, '#e63946'); // Warna merah
-                
-                // Masukkan Label Nama
-                const label = document.createElement('div');
-                label.className = 'apple-label';
-                label.innerText = name;
-                // Sesuaikan ukuran font label dengan ukuran apel
-                label.style.fontSize = Math.max(9, size / 7) + 'px';
-                wrapper.appendChild(label);
-
-                // Set tooltip
-                wrapper.title = `${name} menerima ${count} apresiasi. Klik untuk membaca.`;
-                
-                // Event Klik untuk buka modal
-                wrapper.onclick = () => openModal(name);
-
-                container.appendChild(wrapper);
-            });
-        }
-
-        // Fungsi pembantu agar posisi "acak" tapi tidak berubah-ubah saat refresh
-        function getDeterministicRandomPosition(index, size) {
-            // Seeded random buatan sederhana
-            const xSeed = Math.sin(index + 1) * 10000;
-            const ySeed = Math.cos(index + 1) * 10000;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'apple-wrapper';
             
-            // Jaga agar tidak terlalu di pinggir area dahan
-            const x = 15 + (Math.abs(xSeed) % 70); // 15% - 85%
-            const y = 15 + (Math.abs(ySeed) % 50); // 15% - 65% (area dahan)
-            
-            return { x, y };
-        }
-
-        // --- LOGIKA MODAL (POP-UP) ---
-        function openModal(recipientName) {
-            const modal = document.getElementById('message-modal');
-            const title = document.getElementById('modal-recipient');
-            const list = document.getElementById('modal-messages-list');
-            
-            title.innerText = `Apresiasi untuk ${recipientName}`;
-            list.innerHTML = ''; // Bersihkan list lawas
-
-            // Filter data mentah untuk mengambil pesan milik penerima ini
-            const messages = rawDataApresiasi.filter(item => item.Penerima && item.Penerima.trim() === recipientName);
-
-            messages.forEach(msg => {
-                const item = document.createElement('div');
-                item.className = 'message-item';
-                
-                const text = document.createElement('p');
-                text.className = 'message-text';
-                text.innerText = `"${msg.Ucapan}"`;
-                
-                const sender = document.createElement('p');
-                sender.className = 'message-sender';
-                sender.innerText = `— Dari: ${msg.Pengirim || 'Anonim'}`;
-                
-                item.appendChild(text);
-                item.appendChild(sender);
-                list.appendChild(item);
-            });
-
-            modal.style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('message-modal').style.display = 'none';
-        }
-
-        // Klik di luar kotak modal untuk menutup
-        window.onclick = function(event) {
-            const modal = document.getElementById('message-modal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        // Fungsi sementara jika user belum setting URL Google
-        function renderDummyData() {
-            console.log("Menggunakan data dummy.");
-            rawDataApresiasi = [
-                { Pengirim: 'Siti', Penerima: 'Andi', Ucapan: 'Terima kasih Andi sudah bantu resolve bug urgent kemarin!' },
-                { Pengirim: 'Reno', Penerima: 'Budi', Ucapan: 'Presentasi klien tadi keren banget Bud!' },
-                { Pengirim: 'Dewi', Penerima: 'Andi', Ucapan: 'Andi selalu support kalau diajak diskusi teknik.' },
-                { Pengirim: 'Budi', Penerima: 'Siti', Ucapan: 'Siti jago banget dokumentasinya, rapi!' },
-                { Pengirim: 'Manager', Penerima: 'Andi', Ucapan: 'Kerja bagus bulan ini Andi.' }
+            // ALGORITMA PENEMPATAN NATURAL (Hanya di rimbun daun)
+            // Area Daun Utama (Dalam % terhadap container)
+            // Kita gunakan beberapa koordinat pusat daun agar lebih natural
+            const centers = [
+                {x: 50, y: 44}, {x: 34, y: 56}, {x: 66, y: 56}, {x: 50, y: 28}
             ];
-            processAndRenderData();
-            document.getElementById('status-message').innerText = '(Mode Demo: Menampilkan data contoh)';
+            const base = centers[index % centers.length];
+            const offsetX = (Math.sin(index * 1.5) * 15); // Variasi posisi
+            const offsetY = (Math.cos(index * 1.5) * 15);
+            
+            wrapper.style.left = (base.x + offsetX) + '%';
+            wrapper.style.top = (base.y + offsetY) + '%';
+            
+            wrapper.innerHTML = `
+                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                    <path d="M50,15 C50,5 55,5 55,15" stroke="#4a3000" stroke-width="4" fill="none"/>
+                    <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="#e63946"/>
+                    <circle cx="35" cy="35" r="8" fill="white" opacity="0.2"/>
+                </svg>
+                <div class="apple-label" style="font-size: ${Math.max(8, size/8)}px">${name}</div>
+            `;
+
+            wrapper.onclick = () => showDetail(name);
+            layer.appendChild(wrapper);
+        }
+
+        function showDetail(name) {
+            const modal = document.getElementById('modal');
+            const list = document.getElementById('modal-list');
+            document.getElementById('modal-name').innerText = name;
+            
+            list.innerHTML = "";
+            allData.filter(d => d.Penerima === name).forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'msg-card';
+                div.innerHTML = `<p style="margin:0 0 5px 0">"${m.Ucapan}"</p>
+                                 <p class="msg-sender">Dari: ${m.Pengirim}</p>`;
+                list.appendChild(div);
+            });
+            modal.style.display = 'flex';
         }
     </script>
 </body>
