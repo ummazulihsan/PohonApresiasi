@@ -107,6 +107,15 @@
 </head>
 <body>
 
+    <audio id="bgMusic" loop>
+    <source src="rimbun-kebaikan.mp3" type="audio/mpeg">
+    Browser Anda tidak mendukung elemen audio.
+    </audio>
+    
+    <div id="music-control" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: white; padding: 10px; border-radius: 50%; cursor: pointer; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+        <i id="music-icon" class="fas fa-volume-mute" style="color: var(--leaf-green);"></i>
+    </div>
+
     <header>
         <h1 class="app-title">BERARTI</h1>
         <p class="app-subtitle">(Berbagi Apresiasi dari Hati)</p>
@@ -187,6 +196,28 @@
             btn.classList.add('active');
             if(pageId === 'page-tree') renderTree(); // Re-render untuk animasi pop-in
         }
+
+        const bgMusic = document.getElementById('bgMusic');
+            const musicIcon = document.getElementById('music-icon');
+            
+            // Fungsi untuk nyalakan/matikan musik
+            function toggleMusic() {
+                if (bgMusic.paused) {
+                    bgMusic.play();
+                    musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+                } else {
+                    bgMusic.pause();
+                    musicIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
+                }
+            }
+            
+            // Menjalankan musik otomatis saat pengguna mengklik apa saja di layar
+            document.addEventListener('click', function() {
+                if (bgMusic.paused) {
+                    bgMusic.play();
+                    musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+                }
+            }, { once: true }); // Hanya berjalan satu kali saat klik pertama
 
         async function refreshData() {
             try {
