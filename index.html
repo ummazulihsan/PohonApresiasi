@@ -11,275 +11,239 @@
             --sky-top: #a2d2ff;
             --sky-bottom: #caf0f8;
             --grass-green: #70e000;
-            --trunk-brown: #5d4037;
+            --white-glass: rgba(255, 255, 255, 0.9);
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            margin: 0; padding: 0;
-            background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
-            min-height: 100vh; overflow-x: hidden;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0; background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+            min-height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* --- DEKORASI LATAR --- */
-        .cloud {
-            position: absolute; background: white; border-radius: 50px;
-            opacity: 0.6; z-index: 0; animation: float 35s linear infinite;
+        /* --- NAVIGATION TABS --- */
+        .tab-bar {
+            background: var(--leaf-green);
+            display: flex; justify-content: center;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .cloud:nth-child(1) { width: 120px; height: 45px; top: 10%; left: -150px; }
-        .cloud:nth-child(2) { width: 180px; height: 60px; top: 25%; left: -250px; animation-delay: 12s; }
-        @keyframes float { from { left: -250px; } to { left: 110vw; } }
-
-        .grass {
-            position: absolute; bottom: 0; width: 100%; height: 60px;
-            background: var(--grass-green); z-index: 1;
-            border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+        .tab-btn {
+            padding: 15px 20px; border: none; background: none;
+            color: rgba(255,255,255,0.7); cursor: pointer;
+            font-weight: bold; font-size: 0.9rem; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
         }
+        .tab-btn.active { color: white; border-bottom: 4px solid var(--grass-green); }
+        .tab-btn:hover { background: rgba(255,255,255,0.1); }
 
-        /* --- NAVIGASI HALAMAN --- */
-        .page {
-            display: none; min-height: 100vh; flex-direction: column;
-            align-items: center; padding: 20px; box-sizing: border-box; position: relative;
+        /* --- CONTAINER --- */
+        .page { display: none; padding: 20px; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
+        .page.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- DASHBOARD STYLES --- */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 15px; width: 100%; max-width: 600px; margin-bottom: 25px;
         }
-        .active { display: flex; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* --- FORM INPUT --- */
-        .card {
-            background: rgba(255, 255, 255, 0.95); padding: 35px; border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 450px;
-            z-index: 10; margin-top: 20px; backdrop-filter: blur(10px);
-            border-top: 8px solid var(--leaf-green);
+        .stat-card {
+            background: white; padding: 20px; border-radius: 15px;
+            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        
-        .main-title { color: var(--leaf-green); text-align: center; margin-bottom: 5px; font-size: 2.2rem; font-weight: 900; }
-        .sub-title { color: #555; text-align: center; margin-bottom: 25px; font-size: 0.9rem; font-weight: 500; }
+        .stat-value { display: block; font-size: 1.8rem; font-weight: 900; color: var(--leaf-green); }
+        .stat-label { font-size: 0.7rem; color: #666; font-weight: bold; }
 
+        .leaderboard {
+            background: white; width: 100%; max-width: 600px;
+            border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .leaderboard h3 { margin-top: 0; color: var(--leaf-green); border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .leader-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid #eee;
+        }
+        .leader-rank { font-weight: 900; color: var(--apple-red); width: 30px; }
+        .leader-name { flex-grow: 1; font-weight: 600; color: #333; }
+        .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+
+        /* --- FORM & TREE STYLES --- */
+        .card { background: var(--white-glass); padding: 30px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--leaf-green); font-size: 0.9rem; }
-        select, textarea {
-            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px;
-            box-sizing: border-box; font-size: 14px; outline: none; background: white;
-        }
-
-        .btn {
-            background: var(--leaf-green); color: white; border: none; padding: 16px;
-            border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold;
-            cursor: pointer; transition: 0.3s;
-        }
-        .btn-secondary { background: #6c757d; margin-top: 12px; }
-
-        /* --- POHON & BUAH --- */
-        #tree-container {
-            position: relative; width: 100%; max-width: 900px; height: 450px;
-            z-index: 5; margin-top: 10px;
-        }
-        #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
-
-        .apple-wrapper {
-            position: absolute; transform: translate(-50%, -50%);
-            cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .apple-content {
-            position: absolute; width: 85%; height: 70%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; color: white; pointer-events: none; padding: 2px;
-        }
-        .apple-name { font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 2px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); width: 90%; }
+        select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; }
         
-        .apple-messages-box { font-size: 8px; font-style: italic; opacity: 0.95; overflow: hidden; width: 100%; height: 35px; position: relative; }
-        .scroll-text { position: absolute; width: 100%; animation: scrollUp 12s linear infinite; }
-        @keyframes scrollUp { 0% { top: 100%; } 100% { top: -200%; } }
+        #tree-container { position: relative; width: 100%; max-width: 800px; height: 450px; margin-top: 20px; }
+        #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
+        .apple-wrapper { position: absolute; transform: translate(-50%, -50%); cursor: pointer; text-align: center; }
+        .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 35%; width: 80%; text-shadow: 1px 1px 2px black; pointer-events: none; }
 
-        /* --- DASHBOARD STATS --- */
-        .dashboard {
-            display: flex; gap: 15px; margin-top: 20px; z-index: 20;
-            background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); backdrop-filter: blur(5px);
-        }
-        .stat-item { text-align: center; min-width: 80px; }
-        .stat-value { display: block; font-size: 1.5rem; font-weight: 900; color: var(--leaf-green); }
-        .stat-label { font-size: 0.7rem; font-weight: bold; color: #666; text-transform: uppercase; }
+        .btn { background: var(--leaf-green); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
 
-        /* --- MODAL --- */
-        #modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center;
-            backdrop-filter: blur(8px);
-        }
-        .modal-card {
-            background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 25px;
-            max-height: 80vh; overflow-y: auto; border-top: 10px solid var(--apple-red);
-        }
-        .msg-bubble { background: #f8fdfa; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--apple-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .msg-from { font-size: 11px; font-weight: bold; color: var(--leaf-green); margin-top: 5px; display: block; text-align: right; }
+        /* MODAL */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-card { background: white; width: 90%; max-width: 450px; padding: 25px; border-radius: 20px; max-height: 70vh; overflow-y: auto; }
+        .msg-bubble { background: #f0f9ff; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--apple-red); }
     </style>
 </head>
 <body>
 
-    <div class="cloud"></div><div class="cloud"></div><div class="grass"></div>
+    <nav class="tab-bar">
+        <button class="tab-btn active" onclick="showTab('page-dash', this)">Dashboard</button>
+        <button class="tab-btn" onclick="showTab('page-input', this)">Beri Apresiasi</button>
+        <button class="tab-btn" onclick="showTab('page-tree', this)">Pohon Kebaikan BERARTI</button>
+    </nav>
 
-    <div id="page-form" class="page active">
+    <div id="page-dash" class="page active">
+        <h1 style="color:var(--leaf-green)">📊 Statistik Kebaikan</h1>
+        <div class="stats-grid">
+            <div class="stat-card"><span class="stat-value" id="s-pgr">0</span><span class="stat-label">Pengirim</span></div>
+            <div class="stat-card"><span class="stat-value" id="s-pnr">0</span><span class="stat-label">Penerima</span></div>
+            <div class="stat-card"><span class="stat-value" id="s-total">0</span><span class="stat-label">Ucapan</span></div>
+        </div>
+
+        <div class="leaderboard">
+            <h3>🏆 Top 5 Penerima Apresiasi</h3>
+            <div id="leaderboard-list">
+                </div>
+        </div>
+    </div>
+
+    <div id="page-input" class="page">
         <div class="card">
-            <h1 class="main-title">BERARTI</h1>
-            <p class="sub-title">(Berbagi Apresiasi dari Hati)</p>
+            <h2 style="text-align:center; color:var(--leaf-green)">🍎 Kirim Apresiasi</h2>
             <div class="input-group">
                 <label>Nama Pengirim</label>
-                <select id="in-pengirim"><option value="">Memuat nama...</option></select>
+                <select id="in-pengirim"><option value="">Memuat...</option></select>
             </div>
             <div class="input-group">
-                <label>Nama Penerima</label>
-                <select id="in-penerima"><option value="">Memuat nama...</option></select>
+                <label>Untuk Siapa?</label>
+                <select id="in-penerima"><option value="">Memuat...</option></select>
             </div>
             <div class="input-group">
-                <label>Pesan Apresiasi</label>
-                <textarea id="in-pesan" placeholder="Sebutkan hal baik..."></textarea>
+                <label>Pesan Kebaikan</label>
+                <textarea id="in-pesan" rows="4" placeholder="Tuliskan hal positif..."></textarea>
             </div>
-            <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon 🍎</button>
-            <button class="btn btn-secondary" onclick="showPage('page-tree')">Lihat Pohon →</button>
-            <div id="status" style="margin-top:10px; text-align:center;"></div>
+            <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon!</button>
+            <div id="status" style="margin-top:10px; text-align:center; font-weight:bold;"></div>
         </div>
     </div>
 
     <div id="page-tree" class="page">
-        <h1 style="color:var(--leaf-green); text-shadow: 2px 2px white; margin-bottom:0;">🌳 Pohon BERARTI</h1>
-        
+        <h2 style="color:var(--leaf-green); margin:0;">🌳 Pohon Kebaikan</h2>
         <div id="tree-container">
-            <svg id="tree-svg" viewBox="0 0 500 500">
+            <svg viewBox="0 0 500 500" style="width:100%; height:100%">
                 <path d="M235,500 L265,500 L260,320 L240,320 Z" fill="#4e342e"/>
                 <circle cx="250" cy="230" r="110" fill="#1b4332"/>
                 <circle cx="170" cy="280" r="95" fill="#2d6a4f"/>
                 <circle cx="330" cy="280" r="95" fill="#2d6a4f"/>
-                <circle cx="250" cy="140" r="85" fill="#409167"/>
             </svg>
             <div id="apples-layer"></div>
         </div>
-
-        <div class="dashboard">
-            <div class="stat-item">
-                <span class="stat-value" id="stat-pengirim">0</span>
-                <span class="stat-label">Pengirim</span>
-            </div>
-            <div style="width:1px; background:#ddd;"></div>
-            <div class="stat-item">
-                <span class="stat-value" id="stat-penerima">0</span>
-                <span class="stat-label">Penerima</span>
-            </div>
-            <div style="width:1px; background:#ddd;"></div>
-            <div class="stat-item">
-                <span class="stat-value" id="stat-total">0</span>
-                <span class="stat-label">Ucapan</span>
-            </div>
-        </div>
-        
-        <button class="btn" style="max-width:200px; margin-top:20px;" onclick="showPage('page-form')">← Beri Lagi</button>
     </div>
 
-    <div id="modal" onclick="this.style.display='none'">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h2 id="modal-title" style="margin-top:0; color:var(--apple-red);"></h2>
-            <div id="modal-content"></div>
-        </div>
-    </div>
+    <div id="modal" onclick="this.style.display='none'"><div class="modal-card" onclick="event.stopPropagation()"><h2 id="modal-title" style="color:var(--apple-red)"></h2><div id="modal-content"></div></div></div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec';
         let allData = [];
 
-        // Load awal untuk isi dropdown
-        window.onload = loadTreeData;
+        window.onload = refreshData;
 
-        function showPage(pageId) {
+        function showTab(pageId, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            if(pageId === 'page-tree') loadTreeData();
+            btn.classList.add('active');
         }
 
-        async function loadTreeData() {
-            const layer = document.getElementById('apples-layer');
-            const selPgr = document.getElementById('in-pengirim');
-            const selPnr = document.getElementById('in-penerima');
-            
+        async function refreshData() {
             try {
                 const res = await fetch(API_URL);
-                const dataJson = await res.json();
+                const json = await res.json();
+                allData = json.apresiasi;
+
+                // 1. ISI DROPDOWN
+                const list = json.karyawan;
+                const dropdowns = [document.getElementById('in-pengirim'), document.getElementById('in-penerima')];
+                const html = '<option value="">-- Pilih Nama --</option>' + list.map(n => `<option value="${n}">${n}</option>`).join('');
+                dropdowns.forEach(d => d.innerHTML = html);
+
+                // 2. HITUNG STATISTIK & LEADERBOARD
+                processDashboard();
                 
-                allData = dataJson.apresiasi;
-                const listKaryawan = dataJson.karyawan;
-
-                // Update Dropdown
-                const optHtml = '<option value="">-- Pilih Nama --</option>' + 
-                    listKaryawan.map(n => `<option value="${n}">${n}</option>`).join('');
-                selPgr.innerHTML = selPnr.innerHTML = optHtml;
-
-                // Hitung Statistik
-                const uniquePengirim = new Set(allData.map(d => d.Pengirim)).size;
-                const uniquePenerima = new Set(allData.map(d => d.Penerima)).size;
-                
-                document.getElementById('stat-pengirim').innerText = uniquePengirim;
-                document.getElementById('stat-penerima').innerText = uniquePenerima;
-                document.getElementById('stat-total').innerText = allData.length;
-
-                // Grouping Data untuk Pohon
-                const groups = {};
-                allData.forEach(d => {
-                    if(!d.Penerima) return;
-                    const key = d.Penerima.toLowerCase().trim();
-                    if(!groups[key]) {
-                        groups[key] = { displayName: d.Penerima, messages: [] };
-                    }
-                    // FIX: Masukkan pengirim ke dalam array messages
-                    groups[key].messages.push({ text: d.Ucapan, from: d.Pengirim });
-                });
-
-                layer.innerHTML = "";
-                Object.values(groups).forEach((g, i) => renderApple(g, i));
-            } catch(e) { console.error(e); }
+                // 3. RENDER POHON
+                renderTree();
+            } catch(e) { console.error("Gagal memuat data", e); }
         }
 
-        function renderApple(group, index) {
+        function processDashboard() {
+            const counts = {};
+            const pengirims = new Set();
+            const penerimas = new Set();
+
+            allData.forEach(d => {
+                pengirims.add(d.Pengirim);
+                penerimas.add(d.Penerima);
+                counts[d.Penerima] = (counts[d.Penerima] || 0) + 1;
+            });
+
+            document.getElementById('s-pgr').innerText = pengirims.size;
+            document.getElementById('s-pnr').innerText = penerimas.size;
+            document.getElementById('s-total').innerText = allData.length;
+
+            // Sort Leaderboard Top 5
+            const sorted = Object.entries(counts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            const lbList = document.getElementById('leaderboard-list');
+            lbList.innerHTML = sorted.length ? sorted.map((item, i) => `
+                <div class="leader-item">
+                    <span class="leader-rank">#${i+1}</span>
+                    <span class="leader-name">${item[0]}</span>
+                    <span class="leader-count">${item[1]} Apresiasi</span>
+                </div>
+            `).join('') : '<p style="text-align:center; color:#999;">Belum ada data.</p>';
+        }
+
+        function renderTree() {
             const layer = document.getElementById('apples-layer');
-            const count = group.messages.length;
-            const size = Math.min(85 + (count * 10), 140);
-            
-            const wrapper = document.createElement('div');
-            wrapper.className = 'apple-wrapper';
-            const spots = [{x:50,y:40}, {x:32,y:58}, {x:68,y:58}, {x:50,y:20}, {x:22,y:45}, {x:78,y:45}, {x:40,y:28}, {x:60,y:28}];
-            const spot = spots[index % spots.length];
-            
-            wrapper.style.left = spot.x + '%';
-            wrapper.style.top = spot.y + '%';
-            
-            const combinedText = group.messages.map(m => `• ${m.text}`).join(' | ');
+            layer.innerHTML = "";
+            const groups = {};
+            allData.forEach(d => {
+                if(!groups[d.Penerima]) groups[d.Penerima] = [];
+                groups[d.Penerima].push(d);
+            });
 
-            wrapper.innerHTML = `
-                <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
-                    <path d="M52,15 Q70,5 65,20" fill="none" stroke="#3e2723" stroke-width="3"/>
-                </svg>
-                <div class="apple-content">
-                    <div class="apple-name">${group.displayName}</div>
-                    <div class="apple-messages-box">
-                        <div class="scroll-text">${combinedText}</div>
-                    </div>
-                </div>
-            `;
-            wrapper.onclick = () => openModal(group);
-            layer.appendChild(wrapper);
-        }
-
-        function openModal(group) {
-            const m = document.getElementById('modal');
-            document.getElementById('modal-title').innerText = `Untuk ${group.displayName}`;
-            const content = document.getElementById('modal-content');
-            
-            content.innerHTML = group.messages.reverse().map(msg => `
-                <div class="msg-bubble">
-                    <p style="margin:0;">"${msg.text}"</p>
-                    <span class="msg-from">— Dari: ${msg.from || 'Rekan Setia'}</span>
-                </div>
-            `).join('');
-            m.style.display = 'flex';
+            Object.keys(groups).forEach((nama, i) => {
+                const count = groups[nama].length;
+                const size = Math.min(70 + (count * 10), 130);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'apple-wrapper';
+                const spots = [{x:50,y:35},{x:30,y:55},{x:70,y:55},{x:50,y:15},{x:22,y:45},{x:78,y:45},{x:40,y:25},{x:60,y:25}];
+                const s = spots[i % spots.length];
+                wrapper.style.left = s.x + '%'; wrapper.style.top = s.y + '%';
+                
+                wrapper.innerHTML = `
+                    <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                        <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90" fill="var(--apple-red)"/>
+                        <path d="M50,15 Q60,0 70,15" fill="none" stroke="#3e2723" stroke-width="4"/>
+                    </svg>
+                    <div class="apple-name">${nama}</div>
+                `;
+                
+                wrapper.onclick = () => {
+                    document.getElementById('modal-title').innerText = "Untuk " + nama;
+                    document.getElementById('modal-content').innerHTML = groups[nama].map(m => `
+                        <div class="msg-bubble">
+                            "${m.Ucapan}"<br>
+                            <span style="font-size:0.8rem; display:block; text-align:right; font-weight:bold; color:var(--leaf-green);">— Dari: ${m.Pengirim}</span>
+                        </div>
+                    `).join('');
+                    document.getElementById('modal').style.display = 'flex';
+                };
+                layer.appendChild(wrapper);
+            });
         }
 
         function submitApresiasi() {
@@ -289,14 +253,13 @@
             if(!pgr || !pnr || !psn) return alert("Lengkapi data!");
 
             document.getElementById('status').innerText = "⏳ Mengirim...";
-            const body = new FormData();
-            body.append('Pengirim', pgr); body.append('Penerima', pnr); body.append('Ucapan', psn);
+            const fd = new FormData();
+            fd.append('Pengirim', pgr); fd.append('Penerima', pnr); fd.append('Ucapan', psn);
 
-            fetch(API_URL, { method: 'POST', body: body, mode: 'no-cors' })
-                .then(() => {
-                    alert("🍎 Terkirim!");
-                    location.reload();
-                });
+            fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
+                alert("🍎 Berhasil!");
+                location.reload();
+            });
         }
     </script>
 </body>
