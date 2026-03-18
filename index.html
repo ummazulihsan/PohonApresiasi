@@ -4,105 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BERARTI - Berbagi Apresiasi dari Hati</title>
-    <style>
-        :root {
-            --leaf-green: #2d6a4f;
-            --apple-red: #e63946;
-            --sky-top: #a2d2ff;
-            --sky-bottom: #caf0f8;
-            --grass-green: #70e000;
-            --trunk-brown: #5d4037;
-            --white-glass: rgba(255, 255, 255, 0.85);
-            --shadow: 0 8px 30px rgba(0,0,0,0.1);
-        }
+<style>
+    :root {
+        --leaf-green: #2d6a4f;
+        --apple-red: #e63946;
+        --sky-top: #a2d2ff;
+        --sky-bottom: #caf0f8;
+        --grass-green: #70e000;
+        --trunk-brown: #5d4037;
+        --white-glass: rgba(255, 255, 255, 0.85);
+        --shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0;
-            background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
-            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
-        }
+    /* --- BASE LAYOUT --- */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
 
-        /* --- HEADER & QUOTE --- */
-        header {
-            text-align: center; padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-        }
-        .app-title { color: var(--leaf-green); font-size: 2.8rem; font-weight: 900; margin: 0; text-shadow: 2px 2px white; }
-        .app-subtitle { color: #555; font-size: 1rem; font-weight: 600; margin: 0 0 15px 0; }
-        .quote-container { max-width: 600px; margin: 0 auto; padding: 15px 20px; background: white; border-radius: 15px; box-shadow: var(--shadow); border-left: 5px solid var(--leaf-green); }
-        .quote-text { font-style: italic; color: #444; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+    body {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
 
-        /* --- NAVIGATION TABS --- */
-        .tab-bar { background: var(--leaf-green); display: flex; justify-content: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .tab-btn { padding: 18px 25px; border: none; background: none; color: rgba(255,255,255,0.7); cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; outline: none; }
-        .tab-btn.active { color: white; }
-        .tab-btn.active::after { content: ''; display: block; width: 100%; height: 4px; background: var(--grass-green); position: absolute; bottom: 0; left: 0; border-radius: 2px; }
-        .tab-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-        .tab-btn { position: relative; }
+    /* Pembungkus utama agar footer tetap di bawah */
+    .main-content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 
-        /* --- CONTAINER HALAMAN --- */
-        .page { display: none; padding: 30px 20px; flex-direction: column; align-items: center; }
-        .page.active { display: flex; }
+    /* --- HEADER & QUOTE --- */
+    header {
+        width: 100%;
+        text-align: center;
+        padding: 30px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(255,255,255,0.3);
+        box-sizing: border-box;
+    }
+    .app-title { color: var(--leaf-green); font-size: 2.8rem; font-weight: 900; margin: 0; text-shadow: 2px 2px white; }
+    .app-subtitle { color: #555; font-size: 1rem; font-weight: 600; margin: 0 0 15px 0; }
+    .quote-container { 
+        max-width: 600px; 
+        margin: 0 auto; 
+        padding: 15px 20px; 
+        background: white; 
+        border-radius: 15px; 
+        box-shadow: var(--shadow); 
+        border-left: 5px solid var(--leaf-green); 
+    }
+    .quote-text { font-style: italic; color: #444; font-size: 0.9rem; line-height: 1.6; margin: 0; }
 
-        /* --- ANIMASI POP-IN --- */
-        @keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    /* --- NAVIGATION TABS --- */
+    .tab-bar { 
+        background: var(--leaf-green); 
+        display: flex; 
+        justify-content: center; 
+        position: sticky; 
+        top: 0; 
+        z-index: 100; 
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    }
+    .tab-btn { 
+        padding: 18px 25px; 
+        border: none; 
+        background: none; 
+        color: rgba(255,255,255,0.7); 
+        cursor: pointer; 
+        font-weight: bold; 
+        font-size: 0.9rem; 
+        transition: 0.3s; 
+        text-transform: uppercase; 
+        letter-spacing: 1px; 
+        outline: none; 
+        position: relative;
+    }
+    .tab-btn.active { color: white; }
+    .tab-btn.active::after { 
+        content: ''; 
+        display: block; 
+        width: 100%; 
+        height: 4px; 
+        background: var(--grass-green); 
+        position: absolute; 
+        bottom: 0; 
+        left: 0; 
+        border-radius: 2px; 
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.1); color: white; }
 
-        /* --- TAB 1: DASHBOARD --- */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; width: 100%; max-width: 700px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-value { display: block; font-size: 2.2rem; font-weight: 900; color: var(--leaf-green); }
-        .stat-label { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    /* --- CONTAINER HALAMAN --- */
+    .page { 
+        display: none; 
+        padding: 30px 20px; 
+        flex-direction: column; 
+        align-items: center; 
+        width: 100%;
+        max-width: 1200px;
+        box-sizing: border-box;
+    }
+    .page.active { display: flex; }
 
-        .leaderboard { background: white; width: 100%; max-width: 700px; border-radius: 25px; padding: 30px; box-shadow: var(--shadow); }
-        .leaderboard h3 { margin-top: 0; color: var(--leaf-green); font-size: 1.4rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
-        .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; transition: background 0.2s; }
-        .leader-item:hover { background: #fdfdfd; }
-        .leader-rank { font-weight: 900; color: #bbb; width: 40px; font-size: 1.1rem; }
-        .leader-rank.top-3 { color: #f1c40f; font-size: 1.3rem; } /* Warna Emas untuk Top 3 */
-        .leader-name { flex-grow: 1; font-weight: 600; color: #333; }
-        .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+    /* --- TAB 1: DASHBOARD --- */
+    .stats-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+        gap: 20px; 
+        width: 100%; 
+        max-width: 700px; 
+        margin-bottom: 30px; 
+    }
+    .stat-card { 
+        background: white; 
+        padding: 25px; 
+        border-radius: 20px; 
+        text-align: center; 
+        box-shadow: var(--shadow); 
+        transition: transform 0.3s; 
+    }
+    .stat-card:hover { transform: translateY(-5px); }
+    .stat-value { display: block; font-size: 2.2rem; font-weight: 900; color: var(--leaf-green); }
+    .stat-label { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- TAB 2: INPUT FORM --- */
-        .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
-        .input-group { margin-bottom: 20px; position: relative; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); font-size: 0.95rem; }
-        .input-group i { position: absolute; left: 15px; top: 40px; color: #888; }
-        .card select, .card textarea { width: 100%; padding: 14px 14px 14px 45px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; transition: 0.3s; background: white; color: #333; }
-        .card select:focus, .card textarea:focus { border-color: var(--leaf-green); box-shadow: 0 0 10px rgba(45, 106, 79, 0.1); }
-        .card textarea { padding-left: 14px; } /* Pesan tidak pakai ikon kiri */
+    .leaderboard-wrapper {
+        width: 100%;
+        max-width: 700px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    .leaderboard { 
+        background: white; 
+        width: 100%; 
+        border-radius: 25px; 
+        padding: 30px; 
+        box-shadow: var(--shadow); 
+        box-sizing: border-box;
+    }
+    .leaderboard h3 { margin-top: 0; color: var(--leaf-green); font-size: 1.4rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
+    .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; transition: background 0.2s; }
+    .leader-item:hover { background: #fdfdfd; }
+    .leader-rank { font-weight: 900; color: #bbb; width: 40px; font-size: 1.1rem; }
+    .leader-rank.top-3 { color: #f1c40f; font-size: 1.3rem; }
+    .leader-name { flex-grow: 1; font-weight: 600; color: #333; }
+    .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
 
-        .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn:hover { background: #1b4332; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .btn:active { transform: translateY(0); }
+    /* --- TAB 2: INPUT FORM --- */
+    .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); box-sizing: border-box; }
+    .input-group { margin-bottom: 20px; position: relative; }
+    .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); font-size: 0.95rem; }
+    .input-group i { position: absolute; left: 15px; top: 40px; color: #888; }
+    .card select, .card textarea { width: 100%; padding: 14px 14px 14px 45px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; transition: 0.3s; background: white; color: #333; box-sizing: border-box; }
+    .card select:focus, .card textarea:focus { border-color: var(--leaf-green); box-shadow: 0 0 10px rgba(45, 106, 79, 0.1); }
+    .card textarea { padding-left: 14px; }
 
-        /* --- TAB 3: POHON APRESIASI --- */
-        #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; margin-top: 10px; }
-        #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
-        
-        .apple-wrapper {
-            position: absolute; transform: translate(-50%, -50%); cursor: pointer;
-            text-align: center; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            opacity: 0; /* Dimulai dari transparan untuk animasi */
-        }
-        .apple-wrapper:hover { z-index: 50; }
-        .apple-wrapper svg { transition: transform 0.2s; }
-        .apple-wrapper:hover svg { transform: scale(1.1); }
+    .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .btn:hover { background: #1b4332; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
 
-        .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 38%; width: 85%; left: 50%; transform: translate(-50%, -50%); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; }
+    /* --- TAB 3: POHON APRESIASI --- */
+    #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; margin-top: 10px; }
+    #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
+    
+    .apple-wrapper {
+        position: absolute; transform: translate(-50%, -50%); cursor: pointer;
+        text-align: center; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        opacity: 0;
+    }
+    @keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    
+    .apple-wrapper:hover { z-index: 50; }
+    .apple-wrapper svg { transition: transform 0.2s; }
+    .apple-wrapper:hover svg { transform: scale(1.1); }
+    .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 38%; width: 85%; left: 50%; transform: translate(-50%, -50%); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; }
+    .apple-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s, bottom 0.3s; }
+    .apple-wrapper:hover .apple-tooltip { opacity: 1; bottom: 110%; }
 
-        /* TOOLTIP BUAH */
-        .apple-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s, bottom 0.3s; }
-        .apple-wrapper:hover .apple-tooltip { opacity: 1; bottom: 110%; }
+    /* --- FOOTER (Sticky) --- */
+    footer {
+        flex-shrink: 0;
+        width: 100%;
+        padding: 30px 20px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        box-sizing: border-box;
+    }
 
-        /* MODAL */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-card { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 25px; max-height: 75vh; overflow-y: auto; position: relative; border-top: 10px solid var(--apple-red); }
-        .msg-bubble { background: #f8fdfa; padding: 18px; border-radius: 18px; margin-bottom: 15px; border-left: 5px solid var(--apple-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    </style>
+    /* --- MODAL --- */
+    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+    .modal-card { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 25px; max-height: 75vh; overflow-y: auto; position: relative; border-top: 10px solid var(--apple-red); }
+    .msg-bubble { background: #f8fdfa; padding: 18px; border-radius: 18px; margin-bottom: 15px; border-left: 5px solid var(--apple-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+</style>
+
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -115,6 +220,8 @@
     <div id="music-control" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: white; padding: 10px; border-radius: 50%; cursor: pointer; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
         <i id="music-icon" class="fas fa-volume-mute" style="color: var(--leaf-green);"></i>
     </div>
+
+    <div class="main-content">
 
     <header>
         <h1 class="app-title">BERARTI</h1>
@@ -151,6 +258,7 @@
         </div>
 
     </div>
+</div>
 </div>
 
 <footer style="margin-top: 50px; padding: 30px 20px; text-align: center; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); color: var(--leaf-green); border-top: 1px solid rgba(255,255,255,0.3); width: 100%; box-sizing: border-box;">
