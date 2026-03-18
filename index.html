@@ -130,29 +130,35 @@
         <button class="tab-btn" onclick="showTab('page-tree', this)"> Pohon Kebaikan</button>
     </nav>
 
-   <div id="page-dash" class="page active">
+   
+    <div id="page-dash" class="page active">
     <div class="stats-grid">
         <div class="stat-card"><span class="stat-value" id="s-pgr">0</span><span class="stat-label">Pengirim</span></div>
         <div class="stat-card"><span class="stat-value" id="s-pnr">0</span><span class="stat-label">Penerima</span></div>
         <div class="stat-card"><span class="stat-value" id="s-total">0</span><span class="stat-label">Ucapan</span></div>
     </div>
 
-    <div class="leaderboard-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px;">
+    <div class="leaderboard-wrapper" style="width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 25px;">
+        
         <div class="leaderboard">
             <h3>🏆 Top 5 Penerima Apresiasi</h3>
             <div id="leaderboard-penerima"></div>
         </div>
 
         <div class="leaderboard">
-            <h3>🌟 Top 5 Pengirim Apresiasi Teraktif</h3>
+            <h3>🌟 Top 5 Pengirim Teraktif</h3>
             <div id="leaderboard-pengirim"></div>
         </div>
+
     </div>
 </div>
 
-<footer style="margin-top: auto; padding: 20px; text-align: center; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: var(--leaf-green); font-weight: bold; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.3);">
-    <p style="margin: 5px 0;">BERARTI v2.0 © 2026</p>
-    <p style="margin: 0; font-weight: normal; opacity: 0.8;">Developed with ❤️ by Ummazulihsan</p>
+<footer style="margin-top: 50px; padding: 30px 20px; text-align: center; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); color: var(--leaf-green); border-top: 1px solid rgba(255,255,255,0.3); width: 100%; box-sizing: border-box;">
+    <p style="margin: 0; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px;">BERARTI</p>
+    <p style="margin: 5px 0 15px; font-size: 0.8rem; opacity: 0.8;">Berbagi Apresiasi dari Hati</p>
+    <div style="width: 40px; height: 2px; background: var(--apple-red); margin: 10px auto;"></div>
+    <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">Developed with ❤️ Ummazulihsan</p>
+    <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Provinsi Kep. Bangka Belitung© 2026 - Menanam Kebaikan Bersama</p>
 </footer>
 
     <div id="page-input" class="page">
