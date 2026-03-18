@@ -89,8 +89,8 @@
 
     <nav class="tab-bar">
         <button class="tab-btn active" onclick="showTab('page-dash', this)">Dashboard</button>
-        <button class="tab-btn" onclick="showTab('page-input', this)">Beri Apresiasi</button>
-        <button class="tab-btn" onclick="showTab('page-tree', this)">Pohon Kebaikan BERARTI</button>
+        <button class="tab-btn" onclick="showTab('page-input', this)">Input Apresiasi</button>
+        <button class="tab-btn" onclick="showTab('page-tree', this)">Pohon Kebaikan</button>
     </nav>
 
     <div id="page-dash" class="page active">
@@ -121,7 +121,7 @@
             </div>
             <div class="input-group">
                 <label>Pesan Kebaikan</label>
-                <textarea id="in-pesan" rows="4" placeholder="Tuliskan hal positif..."></textarea>
+                <textarea id="in-pesan" rows="4" placeholder="Tuliskan hal positif yang dilakukannya"></textarea>
             </div>
             <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon!</button>
             <div id="status" style="margin-top:10px; text-align:center; font-weight:bold;"></div>
@@ -130,6 +130,7 @@
 
     <div id="page-tree" class="page">
         <h2 style="color:var(--leaf-green); margin:0;">🌳 Pohon Kebaikan</h2>
+        <h3 style="color:black; margin:0;">Setiap buah menyimpan pesan tulus untuk rekan kerja</h3>
         <div id="tree-container">
             <svg viewBox="0 0 500 500" style="width:100%; height:100%">
                 <path d="M235,500 L265,500 L260,320 L240,320 Z" fill="#4e342e"/>
@@ -206,7 +207,54 @@
             `).join('') : '<p style="text-align:center; color:#999;">Belum ada data.</p>';
         }
 
-        function renderTree() {
+            function renderTree() {
+                const layer = document.getElementById('apples-layer');
+                layer.innerHTML = "";
+                const groups = {};
+                
+                allData.forEach(d => {
+                    if(!groups[d.Penerima]) groups[d.Penerima] = [];
+                    groups[d.Penerima].push(d);
+                });
+        
+                Object.keys(groups).forEach((nama, i) => {
+                    const count = groups[nama].length;
+                    const size = Math.min(70 + (count * 10), 130);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'apple-wrapper';
+                    
+                    // Posisi acak pada pohon
+                    const spots = [{x:50,y:35},{x:30,y:55},{x:70,y:55},{x:50,y:15},{x:22,y:45},{x:78,y:45},{x:40,y:25},{x:60,y:25}];
+                    const s = spots[i % spots.length];
+                    wrapper.style.left = s.x + '%'; wrapper.style.top = s.y + '%';
+                    
+                    wrapper.innerHTML = `
+                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                            <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90" fill="var(--apple-red)"/>
+                            <path d="M50,15 Q60,0 70,15" fill="none" stroke="#3e2723" stroke-width="4"/>
+                        </svg>
+                        <div class="apple-name">${nama}</div>
+                    `;
+                    
+                    // Klik Buah: Hanya tampilkan pesan, TANPA nama pengirim
+                    wrapper.onclick = () => {
+                        document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
+                        document.getElementById('modal-content').innerHTML = groups[nama].map(m => `
+                            <div class="msg-bubble">
+                                <p style="margin:0; font-style: italic;">"${m.Ucapan}"</p>
+                                <span style="font-size:0.75rem; display:block; text-align:right; color:#888; margin-top:5px;">— Dikirim secara anonim</span>
+                            </div>
+                        `).join('');
+                        document.getElementById('modal').style.display = 'flex';
+                    };
+                    layer.appendChild(wrapper);
+                });
+            }
+        
+            // Fungsi submitApresiasi tetap mengirim data Nama Pengirim ke Sheets (untuk database admin),
+            // tapi data tersebut tidak akan pernah dipanggil/ditampilkan di halaman Pohon.
+                
+     ?*   function renderTree() {
             const layer = document.getElementById('apples-layer');
             layer.innerHTML = "";
             const groups = {};
@@ -244,7 +292,7 @@
                 };
                 layer.appendChild(wrapper);
             });
-        }
+        } */
 
         function submitApresiasi() {
             const pgr = document.getElementById('in-pengirim').value;
