@@ -254,46 +254,7 @@
             // Fungsi submitApresiasi tetap mengirim data Nama Pengirim ke Sheets (untuk database admin),
             // tapi data tersebut tidak akan pernah dipanggil/ditampilkan di halaman Pohon.
                 
-     ?*   function renderTree() {
-            const layer = document.getElementById('apples-layer');
-            layer.innerHTML = "";
-            const groups = {};
-            allData.forEach(d => {
-                if(!groups[d.Penerima]) groups[d.Penerima] = [];
-                groups[d.Penerima].push(d);
-            });
-
-            Object.keys(groups).forEach((nama, i) => {
-                const count = groups[nama].length;
-                const size = Math.min(70 + (count * 10), 130);
-                const wrapper = document.createElement('div');
-                wrapper.className = 'apple-wrapper';
-                const spots = [{x:50,y:35},{x:30,y:55},{x:70,y:55},{x:50,y:15},{x:22,y:45},{x:78,y:45},{x:40,y:25},{x:60,y:25}];
-                const s = spots[i % spots.length];
-                wrapper.style.left = s.x + '%'; wrapper.style.top = s.y + '%';
-                
-                wrapper.innerHTML = `
-                    <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                        <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90" fill="var(--apple-red)"/>
-                        <path d="M50,15 Q60,0 70,15" fill="none" stroke="#3e2723" stroke-width="4"/>
-                    </svg>
-                    <div class="apple-name">${nama}</div>
-                `;
-                
-                wrapper.onclick = () => {
-                    document.getElementById('modal-title').innerText = "Untuk " + nama;
-                    document.getElementById('modal-content').innerHTML = groups[nama].map(m => `
-                        <div class="msg-bubble">
-                            "${m.Ucapan}"<br>
-                            <span style="font-size:0.8rem; display:block; text-align:right; font-weight:bold; color:var(--leaf-green);">— Dari: ${m.Pengirim}</span>
-                        </div>
-                    `).join('');
-                    document.getElementById('modal').style.display = 'flex';
-                };
-                layer.appendChild(wrapper);
-            });
-        } */
-
+    
         function submitApresiasi() {
             const pgr = document.getElementById('in-pengirim').value;
             const pnr = document.getElementById('in-penerima').value;
