@@ -141,14 +141,18 @@
                 "Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis."
             </div>
             
-            <div class="input-group">
-                <label>Nama Pengirim</label>
-                <input type="text" id="in-pengirim" placeholder="Tulis namamu...">
-            </div>
-            <div class="input-group">
-                <label>Nama Penerima</label>
-                <input type="text" id="in-penerima" placeholder="Siapa yang ingin diapresiasi?">
-            </div>
+                <div class="input-group">
+                    <label>Nama Pengirim</label>
+                    <select id="in-pengirim">
+                        <option value="">-- Pilih Nama Anda --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Nama Penerima</label>
+                    <select id="in-penerima">
+                        <option value="">-- Pilih Nama Rekan --</option>
+                    </select>
+                </div>
             <div class="input-group">
                 <label>Pesan Apresiasi</label>
                 <textarea id="in-pesan" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
@@ -188,7 +192,7 @@
 
     <script>
         // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
-        const API_URL = 'https://script.google.com/macros/s/AKfycbz1ZA0ymK88e9c2i-bwHspwjOdShr_xnk--FHDTV9QqXVJUxefdzwr_lpEL868v-dftFQ/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzbvusbUqTr-NGM60C_wx3JFjX1WV3alQHZsPYheuahy_uGaT7lMaGGmqv4T1KHdmTh/exec'; 
 
         let allData = [];
 
@@ -232,7 +236,7 @@
                 });
         }
 
-        async function loadTreeData() {
+       /* async function loadTreeData() {
             const layer = document.getElementById('apples-layer');
             layer.innerHTML = "<p style='text-align:center; padding-top:120px; font-weight:bold; color:var(--leaf-green);'>Melihat pohon tumbuh...</p>";
 
@@ -259,6 +263,57 @@
                 layer.innerHTML = "<p style='text-align:center; color:red; padding-top:100px;'>Gagal memuat pohon.</p>"; 
             }
         }
+        */
+        async function loadTreeData() {
+            const layer = document.getElementById('apples-layer');
+            const selectPengirim = document.getElementById('in-pengirim');
+            const selectPenerima = document.getElementById('in-penerima');
+            
+            layer.innerHTML = "<p style='text-align:center; padding-top:120px;'>Menyiapkan pohon...</p>";
+        
+            try {
+                const res = await fetch(API_URL);
+                const dataJson = await res.json();
+                
+                allData = dataJson.apresiasi;
+                const listKaryawan = dataJson.karyawan;
+        
+                // --- ISI DROPDOWN ---
+                // Bersihkan dropdown kecuali opsi pertama
+                selectPengirim.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+                selectPenerima.innerHTML = '<option value="">-- Pilih Nama Rekan --</option>';
+                
+                listKaryawan.forEach(nama => {
+                    let opt1 = document.createElement('option');
+                    opt1.value = opt1.text = nama;
+                    selectPengirim.add(opt1);
+        
+                    let opt2 = document.createElement('option');
+                    opt2.value = opt2.text = nama;
+                    selectPenerima.add(opt2);
+                });
+        
+                // --- RENDER POHON ---
+                const groups = {};
+                allData.forEach(d => {
+                    if(!d.Penerima) return;
+                    const key = d.Penerima.toLowerCase().trim();
+                    if(!groups[key]) {
+                        groups[key] = { 
+                            displayName: d.Penerima, 
+                            messages: [] 
+                        };
+                    }
+                    groups[key].messages.push({ text: d.Ucapan, from: d.Pengirim });
+                });
+        
+                layer.innerHTML = "";
+                Object.values(groups).forEach((g, i) => renderApple(g, i));
+            } catch(e) { 
+                console.error(e);
+                layer.innerHTML = "<p style='text-align:center; color:red; padding-top:100px;'>Gagal memuat data.</p>"; 
+            }
+        } 
 
         function renderApple(group, index) {
             const layer = document.getElementById('apples-layer');
