@@ -11,90 +11,117 @@
             --sky-top: #a2d2ff;
             --sky-bottom: #caf0f8;
             --grass-green: #70e000;
-            --white-glass: rgba(255, 255, 255, 0.9);
+            --trunk-brown: #5d4037;
+            --white-glass: rgba(255, 255, 255, 0.85);
+            --shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0; background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
-            min-height: 100vh; display: flex; flex-direction: column;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0;
+            background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
         }
+
+        /* --- HEADER & QUOTE --- */
+        header {
+            text-align: center; padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        .app-title { color: var(--leaf-green); font-size: 2.8rem; font-weight: 900; margin: 0; text-shadow: 2px 2px white; }
+        .app-subtitle { color: #555; font-size: 1rem; font-weight: 600; margin: 0 0 15px 0; }
+        .quote-container { max-width: 600px; margin: 0 auto; padding: 15px 20px; background: white; border-radius: 15px; box-shadow: var(--shadow); border-left: 5px solid var(--leaf-green); }
+        .quote-text { font-style: italic; color: #444; font-size: 0.9rem; line-height: 1.6; margin: 0; }
 
         /* --- NAVIGATION TABS --- */
-        .tab-bar {
-            background: var(--leaf-green);
-            display: flex; justify-content: center;
-            position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .tab-btn {
-            padding: 15px 20px; border: none; background: none;
-            color: rgba(255,255,255,0.7); cursor: pointer;
-            font-weight: bold; font-size: 0.9rem; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .tab-btn.active { color: white; border-bottom: 4px solid var(--grass-green); }
-        .tab-btn:hover { background: rgba(255,255,255,0.1); }
+        .tab-bar { background: var(--leaf-green); display: flex; justify-content: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .tab-btn { padding: 18px 25px; border: none; background: none; color: rgba(255,255,255,0.7); cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; outline: none; }
+        .tab-btn.active { color: white; }
+        .tab-btn.active::after { content: ''; display: block; width: 100%; height: 4px; background: var(--grass-green); position: absolute; bottom: 0; left: 0; border-radius: 2px; }
+        .tab-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .tab-btn { position: relative; }
 
-        /* --- CONTAINER --- */
-        .page { display: none; padding: 20px; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
+        /* --- CONTAINER HALAMAN --- */
+        .page { display: none; padding: 30px 20px; flex-direction: column; align-items: center; }
         .page.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- DASHBOARD STYLES --- */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 15px; width: 100%; max-width: 600px; margin-bottom: 25px;
-        }
-        .stat-card {
-            background: white; padding: 20px; border-radius: 15px;
-            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .stat-value { display: block; font-size: 1.8rem; font-weight: 900; color: var(--leaf-green); }
-        .stat-label { font-size: 0.7rem; color: #666; font-weight: bold; }
+        /* --- ANIMASI POP-IN --- */
+        @keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 
-        .leaderboard {
-            background: white; width: 100%; max-width: 600px;
-            border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .leaderboard h3 { margin-top: 0; color: var(--leaf-green); border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-        .leader-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee;
-        }
-        .leader-rank { font-weight: 900; color: var(--apple-red); width: 30px; }
+        /* --- TAB 1: DASHBOARD --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; width: 100%; max-width: 700px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-value { display: block; font-size: 2.2rem; font-weight: 900; color: var(--leaf-green); }
+        .stat-label { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        .leaderboard { background: white; width: 100%; max-width: 700px; border-radius: 25px; padding: 30px; box-shadow: var(--shadow); }
+        .leaderboard h3 { margin-top: 0; color: var(--leaf-green); font-size: 1.4rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
+        .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; transition: background 0.2s; }
+        .leader-item:hover { background: #fdfdfd; }
+        .leader-rank { font-weight: 900; color: #bbb; width: 40px; font-size: 1.1rem; }
+        .leader-rank.top-3 { color: #f1c40f; font-size: 1.3rem; } /* Warna Emas untuk Top 3 */
         .leader-name { flex-grow: 1; font-weight: 600; color: #333; }
-        .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+        .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
 
-        /* --- FORM & TREE STYLES --- */
-        .card { background: var(--white-glass); padding: 30px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--leaf-green); font-size: 0.9rem; }
-        select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; }
-        
-        #tree-container { position: relative; width: 100%; max-width: 800px; height: 450px; margin-top: 20px; }
+        /* --- TAB 2: INPUT FORM --- */
+        .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); font-size: 0.95rem; }
+        .input-group i { position: absolute; left: 15px; top: 40px; color: #888; }
+        .card select, .card textarea { width: 100%; padding: 14px 14px 14px 45px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; transition: 0.3s; background: white; color: #333; }
+        .card select:focus, .card textarea:focus { border-color: var(--leaf-green); box-shadow: 0 0 10px rgba(45, 106, 79, 0.1); }
+        .card textarea { padding-left: 14px; } /* Pesan tidak pakai ikon kiri */
+
+        .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn:hover { background: #1b4332; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(0); }
+
+        /* --- TAB 3: POHON APRESIASI --- */
+        #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; margin-top: 10px; }
         #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
-        .apple-wrapper { position: absolute; transform: translate(-50%, -50%); cursor: pointer; text-align: center; }
-        .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 35%; width: 80%; text-shadow: 1px 1px 2px black; pointer-events: none; }
+        
+        .apple-wrapper {
+            position: absolute; transform: translate(-50%, -50%); cursor: pointer;
+            text-align: center; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0; /* Dimulai dari transparan untuk animasi */
+        }
+        .apple-wrapper:hover { z-index: 50; }
+        .apple-wrapper svg { transition: transform 0.2s; }
+        .apple-wrapper:hover svg { transform: scale(1.1); }
 
-        .btn { background: var(--leaf-green); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 38%; width: 85%; left: 50%; transform: translate(-50%, -50%); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; }
+
+        /* TOOLTIP BUAH */
+        .apple-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s, bottom 0.3s; }
+        .apple-wrapper:hover .apple-tooltip { opacity: 1; bottom: 110%; }
 
         /* MODAL */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-card { background: white; width: 90%; max-width: 450px; padding: 25px; border-radius: 20px; max-height: 70vh; overflow-y: auto; }
-        .msg-bubble { background: #f0f9ff; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--apple-red); }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-card { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 25px; max-height: 75vh; overflow-y: auto; position: relative; border-top: 10px solid var(--apple-red); }
+        .msg-bubble { background: #f8fdfa; padding: 18px; border-radius: 18px; margin-bottom: 15px; border-left: 5px solid var(--apple-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
+    <header>
+        <h1 class="app-title">BERARTI</h1>
+        <p class="app-subtitle">(Berbagi Apresiasi dari Hati)</p>
+        <div class="quote-container">
+            <p class="quote-text">"Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis."</p>
+        </div>
+    </header>
+
     <nav class="tab-bar">
-        <button class="tab-btn active" onclick="showTab('page-dash', this)">Dashboard</button>
-        <button class="tab-btn" onclick="showTab('page-input', this)">Input Apresiasi</button>
-        <button class="tab-btn" onclick="showTab('page-tree', this)">Pohon Kebaikan</button>
+        <button class="tab-btn active" onclick="showTab('page-dash', this)"> Dashboard</button>
+        <button class="tab-btn" onclick="showTab('page-input', this)"> Beri Apresiasi</button>
+        <button class="tab-btn" onclick="showTab('page-tree', this)"> Pohon Kebaikan</button>
     </nav>
 
     <div id="page-dash" class="page active">
-        <h1 style="color:var(--leaf-green)">📊 Statistik Kebaikan</h1>
         <div class="stats-grid">
             <div class="stat-card"><span class="stat-value" id="s-pgr">0</span><span class="stat-label">Pengirim</span></div>
             <div class="stat-card"><span class="stat-value" id="s-pnr">0</span><span class="stat-label">Penerima</span></div>
@@ -102,7 +129,7 @@
         </div>
 
         <div class="leaderboard">
-            <h3>🏆 Top 5 Penerima Apresiasi</h3>
+            <h3>Top 5 Penerima Apresiasi</h3>
             <div id="leaderboard-list">
                 </div>
         </div>
@@ -110,41 +137,44 @@
 
     <div id="page-input" class="page">
         <div class="card">
-            <h2 style="text-align:center; color:var(--leaf-green)">🍎 Kirim Apresiasi</h2>
+            <h2 style="text-align:center; color:var(--leaf-green); margin-top:0;">Kirim Pesan Kebaikan</h2>
             <div class="input-group">
-                <label>Nama Pengirim</label>
-                <select id="in-pengirim"><option value="">Memuat...</option></select>
+                <label>Namamu (Pengirim)</label>
+                <i class="fa fa-user"></i>
+                <select id="in-pengirim"><option value="">Memuat nama...</option></select>
             </div>
             <div class="input-group">
-                <label>Untuk Siapa?</label>
-                <select id="in-penerima"><option value="">Memuat...</option></select>
+                <label>Untuk Siapa? (Penerima)</label>
+                <i class="fa fa-heart"></i>
+                <select id="in-penerima"><option value="">Memuat nama...</option></select>
             </div>
             <div class="input-group">
-                <label>Pesan Kebaikan</label>
-                <textarea id="in-pesan" rows="4" placeholder="Tuliskan hal positif yang dilakukannya"></textarea>
+                <label>Apresiasi Tulusmu</label>
+                <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
             </div>
-            <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon!</button>
-            <div id="status" style="margin-top:10px; text-align:center; font-weight:bold;"></div>
+            <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
+            <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
         </div>
     </div>
 
     <div id="page-tree" class="page">
-        <h2 style="color:var(--leaf-green); margin:0;">🌳 Pohon Kebaikan</h2>
-        <h3 style="color:black; margin:0;">Setiap buah menyimpan pesan tulus untuk rekan kerja</h3>
         <div id="tree-container">
             <svg viewBox="0 0 500 500" style="width:100%; height:100%">
-                <path d="M235,500 L265,500 L260,320 L240,320 Z" fill="#4e342e"/>
-                <circle cx="250" cy="230" r="110" fill="#1b4332"/>
-                <circle cx="170" cy="280" r="95" fill="#2d6a4f"/>
-                <circle cx="330" cy="280" r="95" fill="#2d6a4f"/>
+                <path d="M220,500 C220,450 240,350 250,320 L240,320 C230,350 210,400 210,500 Z" fill="var(--trunk-brown)"/>
+                <path d="M250,320 C250,250 200,200 150,220 M250,300 C250,230 300,200 350,220 M250,250 C250,180 230,130 250,80" stroke="var(--trunk-brown)" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <circle cx="250" cy="220" r="110" fill="var(--leaf-green)" opacity="0.95"/>
+                <circle cx="170" cy="280" r="95" fill="#22543d"/>
+                <circle cx="330" cy="280" r="95" fill="#22543d"/>
+                <circle cx="250" cy="130" r="85" fill="#38a169" opacity="0.8"/>
             </svg>
             <div id="apples-layer"></div>
         </div>
     </div>
 
-    <div id="modal" onclick="this.style.display='none'"><div class="modal-card" onclick="event.stopPropagation()"><h2 id="modal-title" style="color:var(--apple-red)"></h2><div id="modal-content"></div></div></div>
+    <div id="modal" onclick="this.style.display='none'"><div class="modal-card" onclick="event.stopPropagation()"><h2 id="modal-title" style="color:var(--apple-red); margin-top:0;"></h2><div id="modal-content"></div><button class="btn" style="margin-top:20px; padding:10px;" onclick="document.getElementById('modal').style.display='none'">Tutup</button></div></div>
 
     <script>
+        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
         const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec';
         let allData = [];
 
@@ -155,6 +185,7 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             btn.classList.add('active');
+            if(pageId === 'page-tree') renderTree(); // Re-render untuk animasi pop-in
         }
 
         async function refreshData() {
@@ -171,9 +202,6 @@
 
                 // 2. HITUNG STATISTIK & LEADERBOARD
                 processDashboard();
-                
-                // 3. RENDER POHON
-                renderTree();
             } catch(e) { console.error("Gagal memuat data", e); }
         }
 
@@ -192,82 +220,86 @@
             document.getElementById('s-pnr').innerText = penerimas.size;
             document.getElementById('s-total').innerText = allData.length;
 
-            // Sort Leaderboard Top 5
-            const sorted = Object.entries(counts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-
+            const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
             const lbList = document.getElementById('leaderboard-list');
             lbList.innerHTML = sorted.length ? sorted.map((item, i) => `
                 <div class="leader-item">
-                    <span class="leader-rank">#${i+1}</span>
+                    <span class="leader-rank ${i < 3 ? 'top-3' : ''}">${i+1}</span>
                     <span class="leader-name">${item[0]}</span>
-                    <span class="leader-count">${item[1]} Apresiasi</span>
+                    <span class="leader-count">${item[1]} Kebaikan</span>
                 </div>
-            `).join('') : '<p style="text-align:center; color:#999;">Belum ada data.</p>';
+            `).join('') : '<p style="text-align:center; color:#999;">Belum ada data apresiasi.</p>';
         }
 
-            function renderTree() {
-                const layer = document.getElementById('apples-layer');
-                layer.innerHTML = "";
-                const groups = {};
+        function renderTree() {
+            const layer = document.getElementById('apples-layer');
+            layer.innerHTML = "";
+            const groups = {};
+            allData.forEach(d => {
+                if(!groups[d.Penerima]) groups[d.Penerima] = [];
+                groups[d.Penerima].push(d);
+            });
+
+            Object.keys(groups).forEach((nama, i) => {
+                const count = groups[nama].length;
+                const size = Math.min(70 + (count * 10), 130);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'apple-wrapper';
                 
-                allData.forEach(d => {
-                    if(!groups[d.Penerima]) groups[d.Penerima] = [];
-                    groups[d.Penerima].push(d);
-                });
-        
-                Object.keys(groups).forEach((nama, i) => {
-                    const count = groups[nama].length;
-                    const size = Math.min(70 + (count * 10), 130);
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'apple-wrapper';
-                    
-                    // Posisi acak pada pohon
-                    const spots = [{x:50,y:35},{x:30,y:55},{x:70,y:55},{x:50,y:15},{x:22,y:45},{x:78,y:45},{x:40,y:25},{x:60,y:25}];
-                    const s = spots[i % spots.length];
-                    wrapper.style.left = s.x + '%'; wrapper.style.top = s.y + '%';
-                    
-                    wrapper.innerHTML = `
-                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                            <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90" fill="var(--apple-red)"/>
-                            <path d="M50,15 Q60,0 70,15" fill="none" stroke="#3e2723" stroke-width="4"/>
-                        </svg>
-                        <div class="apple-name">${nama}</div>
-                    `;
-                    
-                    // Klik Buah: Hanya tampilkan pesan, TANPA nama pengirim
-                    wrapper.onclick = () => {
-                        document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
-                        document.getElementById('modal-content').innerHTML = groups[nama].map(m => `
-                            <div class="msg-bubble">
-                                <p style="margin:0; font-style: italic;">"${m.Ucapan}"</p>
-                                <span style="font-size:0.75rem; display:block; text-align:right; color:#888; margin-top:5px;">— Dikirim secara anonim</span>
-                            </div>
-                        `).join('');
-                        document.getElementById('modal').style.display = 'flex';
-                    };
-                    layer.appendChild(wrapper);
-                });
-            }
-        
-            // Fungsi submitApresiasi tetap mengirim data Nama Pengirim ke Sheets (untuk database admin),
-            // tapi data tersebut tidak akan pernah dipanggil/ditampilkan di halaman Pohon.
+                // Animasi delay agar muncul bergantian
+                wrapper.style.animationDelay = (i * 0.1) + 's';
+
+                const spots = [{x:50,y:35},{x:30,y:55},{x:70,y:55},{x:50,y:15},{x:22,y:45},{x:78,y:45},{x:40,y:25},{x:60,y:25}];
+                const s = spots[i % spots.length];
+                // Sedikit variasi posisi agar tidak kaku
+                const jitterX = (Math.sin(i) * 3);
+                const jitterY = (Math.cos(i) * 3);
+                wrapper.style.left = (s.x + jitterX) + '%'; 
+                wrapper.style.top = (s.y + jitterY) + '%';
                 
-    
+                wrapper.innerHTML = `
+                    <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                        <path d="M50,15 Q55,0 60,15" stroke="var(--trunk-brown)" stroke-width="4" fill="none"/>
+                        <path d="M52,15 Q70,5 65,20" fill="#48bb78"/>
+                        <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
+                        <ellipse cx="30" cy="35" rx="6" ry="10" fill="white" opacity="0.3" transform="rotate(-30 30 35)"/>
+                    </svg>
+                    <div class="apple-name">${nama}</div>
+                    <div class="apple-tooltip">${count} Apresiasi</div>
+                `;
+                
+                wrapper.onclick = () => {
+                    document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
+                    document.getElementById('modal-content').innerHTML = groups[nama].map(m => `
+                        <div class="msg-bubble">
+                            <p style="margin:0; font-style: italic;">"${m.Ucapan}"</p>
+                            <span style="font-size:0.7rem; display:block; text-align:right; color:#888; margin-top:5px;">— Dari rekan kerjamu</span>
+                        </div>
+                    `).join('');
+                    document.getElementById('modal').style.display = 'flex';
+                };
+                layer.appendChild(wrapper);
+            });
+        }
+
         function submitApresiasi() {
             const pgr = document.getElementById('in-pengirim').value;
             const pnr = document.getElementById('in-penerima').value;
             const psn = document.getElementById('in-pesan').value;
-            if(!pgr || !pnr || !psn) return alert("Lengkapi data!");
+            const stat = document.getElementById('status');
+            if(!pgr || !pnr || !psn) return alert("Mohon lengkapi data!");
 
-            document.getElementById('status').innerText = "⏳ Mengirim...";
+            stat.innerText = "⏳ Sedang menggantungkan buah...";
+            stat.style.color = "#444";
             const fd = new FormData();
             fd.append('Pengirim', pgr); fd.append('Penerima', pnr); fd.append('Ucapan', psn);
 
             fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
-                alert("🍎 Berhasil!");
-                location.reload();
+                stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
+                stat.style.color = "var(--leaf-green)";
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
             });
         }
     </script>
