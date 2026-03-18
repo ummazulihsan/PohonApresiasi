@@ -44,7 +44,7 @@
         .active { display: flex; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- FORM INPUT (BERARTI) --- */
+        /* --- FORM INPUT --- */
         .card {
             background: rgba(255, 255, 255, 0.95); padding: 35px; border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 450px;
@@ -55,61 +55,51 @@
         .main-title { color: var(--leaf-green); text-align: center; margin-bottom: 5px; font-size: 2.2rem; font-weight: 900; }
         .sub-title { color: #555; text-align: center; margin-bottom: 25px; font-size: 0.9rem; font-weight: 500; }
 
-        .quote-box {
-            text-align: center; font-style: italic; color: #444; font-size: 0.85rem;
-            margin-bottom: 25px; line-height: 1.5; padding: 15px;
-            background: #f0fff4; border-radius: 15px; border: 1px dashed var(--leaf-green);
-        }
-
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--leaf-green); font-size: 0.9rem; }
-        input, textarea {
+        select, textarea {
             width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px;
-            box-sizing: border-box; font-size: 14px; outline: none; transition: 0.3s;
+            box-sizing: border-box; font-size: 14px; outline: none; background: white;
         }
-        input:focus, textarea:focus { border-color: var(--leaf-green); background: #fafffc; }
 
         .btn {
             background: var(--leaf-green); color: white; border: none; padding: 16px;
             border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold;
-            cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer; transition: 0.3s;
         }
-        .btn:hover { background: #1b4332; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
         .btn-secondary { background: #6c757d; margin-top: 12px; }
 
         /* --- POHON & BUAH --- */
         #tree-container {
-            position: relative; width: 100%; max-width: 900px; height: 500px;
+            position: relative; width: 100%; max-width: 900px; height: 450px;
             z-index: 5; margin-top: 10px;
         }
         #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
 
         .apple-wrapper {
             position: absolute; transform: translate(-50%, -50%);
-            cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .apple-wrapper:hover { transform: translate(-50%, -50%) scale(1.1); z-index: 100; }
-
         .apple-content {
             position: absolute; width: 85%; height: 70%;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; text-align: center;
-            color: white; pointer-events: none; padding: 2px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; color: white; pointer-events: none; padding: 2px;
         }
-        .apple-name { font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 2px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.3); width: 90%; }
+        .apple-name { font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 2px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); width: 90%; }
         
-        .apple-messages-box {
-            font-size: 8px; line-height: 1.1; font-style: italic; opacity: 0.95; 
-            overflow: hidden; width: 100%; height: 35px; position: relative;
+        .apple-messages-box { font-size: 8px; font-style: italic; opacity: 0.95; overflow: hidden; width: 100%; height: 35px; position: relative; }
+        .scroll-text { position: absolute; width: 100%; animation: scrollUp 12s linear infinite; }
+        @keyframes scrollUp { 0% { top: 100%; } 100% { top: -200%; } }
+
+        /* --- DASHBOARD STATS --- */
+        .dashboard {
+            display: flex; gap: 15px; margin-top: 20px; z-index: 20;
+            background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); backdrop-filter: blur(5px);
         }
-        .scroll-text {
-            position: absolute; width: 100%; animation: scrollUp 12s linear infinite;
-        }
-        @keyframes scrollUp {
-            0% { top: 100%; }
-            100% { top: -200%; }
-        }
+        .stat-item { text-align: center; min-width: 80px; }
+        .stat-value { display: block; font-size: 1.5rem; font-weight: 900; color: var(--leaf-green); }
+        .stat-label { font-size: 0.7rem; font-weight: bold; color: #666; text-transform: uppercase; }
 
         /* --- MODAL --- */
         #modal {
@@ -119,54 +109,40 @@
         }
         .modal-card {
             background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 25px;
-            max-height: 80vh; overflow-y: auto; position: relative;
-            border-top: 10px solid var(--apple-red);
+            max-height: 80vh; overflow-y: auto; border-top: 10px solid var(--apple-red);
         }
-        .msg-bubble { background: #f8fdfa; padding: 18px; border-radius: 18px; margin-bottom: 15px; border-left: 5px solid var(--apple-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .msg-from { font-size: 12px; font-weight: bold; color: var(--leaf-green); margin-top: 8px; display: block; text-align: right; }
+        .msg-bubble { background: #f8fdfa; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--apple-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .msg-from { font-size: 11px; font-weight: bold; color: var(--leaf-green); margin-top: 5px; display: block; text-align: right; }
     </style>
 </head>
 <body>
 
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    <div class="grass"></div>
+    <div class="cloud"></div><div class="cloud"></div><div class="grass"></div>
 
     <div id="page-form" class="page active">
         <div class="card">
             <h1 class="main-title">BERARTI</h1>
             <p class="sub-title">(Berbagi Apresiasi dari Hati)</p>
-            
-            <div class="quote-box">
-                "Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis."
+            <div class="input-group">
+                <label>Nama Pengirim</label>
+                <select id="in-pengirim"><option value="">Memuat nama...</option></select>
             </div>
-            
-                <div class="input-group">
-                    <label>Nama Pengirim</label>
-                    <select id="in-pengirim">
-                        <option value="">-- Pilih Nama Anda --</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Nama Penerima</label>
-                    <select id="in-penerima">
-                        <option value="">-- Pilih Nama Rekan --</option>
-                    </select>
-                </div>
+            <div class="input-group">
+                <label>Nama Penerima</label>
+                <select id="in-penerima"><option value="">Memuat nama...</option></select>
+            </div>
             <div class="input-group">
                 <label>Pesan Apresiasi</label>
-                <textarea id="in-pesan" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
+                <textarea id="in-pesan" placeholder="Sebutkan hal baik..."></textarea>
             </div>
-            
             <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon 🍎</button>
-            <button class="btn btn-secondary" onclick="showPage('page-tree')">Lihat Seluruh Apresiasi →</button>
-            <div id="status" style="margin-top:15px; text-align:center; font-size: 0.9rem; font-weight: bold;"></div>
+            <button class="btn btn-secondary" onclick="showPage('page-tree')">Lihat Pohon →</button>
+            <div id="status" style="margin-top:10px; text-align:center;"></div>
         </div>
     </div>
 
     <div id="page-tree" class="page">
-        <h1 style="color:var(--leaf-green); text-shadow: 2px 2px white; margin-bottom:0;">🌳 Pohon Kebaikan BERARTI</h1>
-        <p style="color:#444; margin-top:5px; font-weight: 500;">Setiap buah menyimpan pesan tulus untuk rekan kerja</p>
+        <h1 style="color:var(--leaf-green); text-shadow: 2px 2px white; margin-bottom:0;">🌳 Pohon BERARTI</h1>
         
         <div id="tree-container">
             <svg id="tree-svg" viewBox="0 0 500 500">
@@ -178,23 +154,40 @@
             </svg>
             <div id="apples-layer"></div>
         </div>
+
+        <div class="dashboard">
+            <div class="stat-item">
+                <span class="stat-value" id="stat-pengirim">0</span>
+                <span class="stat-label">Pengirim</span>
+            </div>
+            <div style="width:1px; background:#ddd;"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-penerima">0</span>
+                <span class="stat-label">Penerima</span>
+            </div>
+            <div style="width:1px; background:#ddd;"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-total">0</span>
+                <span class="stat-label">Ucapan</span>
+            </div>
+        </div>
         
-        <button class="btn" style="max-width:250px; z-index:20; margin-top:20px;" onclick="showPage('page-form')">← Berikan Apresiasi Lagi</button>
+        <button class="btn" style="max-width:200px; margin-top:20px;" onclick="showPage('page-form')">← Beri Lagi</button>
     </div>
 
     <div id="modal" onclick="this.style.display='none'">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h2 id="modal-title" style="margin-top:0; color:var(--apple-red); border-bottom: 2px solid #eee; padding-bottom: 10px;"></h2>
+            <h2 id="modal-title" style="margin-top:0; color:var(--apple-red);"></h2>
             <div id="modal-content"></div>
-            <button class="btn" style="margin-top:10px" onclick="document.getElementById('modal').style.display='none'">Tutup</button>
         </div>
     </div>
 
     <script>
-        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
         const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec'; 
-
         let allData = [];
+
+        // Load awal untuk isi dropdown
+        window.onload = loadTreeData;
 
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -202,148 +195,72 @@
             if(pageId === 'page-tree') loadTreeData();
         }
 
-        function submitApresiasi() {
-            const pgr = document.getElementById('in-pengirim').value.trim();
-            const pnr = document.getElementById('in-penerima').value.trim();
-            const psn = document.getElementById('in-pesan').value.trim();
-            const stat = document.getElementById('status');
-
-            if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua datanya ya!");
-
-            stat.innerText = "⏳ Sedang mengirim kebaikan...";
-            stat.style.color = "#555";
-            
-            const body = new FormData();
-            body.append('Pengirim', pgr);
-            body.append('Penerima', pnr);
-            body.append('Ucapan', psn);
-
-            fetch(API_URL, { method: 'POST', body: body, mode: 'no-cors' })
-                .then(() => {
-                    stat.style.color = "var(--leaf-green)";
-                    stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
-                    setTimeout(() => {
-                        document.getElementById('in-pengirim').value = '';
-                        document.getElementById('in-penerima').value = '';
-                        document.getElementById('in-pesan').value = '';
-                        stat.innerText = "";
-                        showPage('page-tree');
-                    }, 1500);
-                })
-                .catch(() => {
-                    stat.style.color = "red";
-                    stat.innerText = "Waduh, koneksi gagal. Coba lagi ya!";
-                });
-        }
-
-       /* async function loadTreeData() {
-            const layer = document.getElementById('apples-layer');
-            layer.innerHTML = "<p style='text-align:center; padding-top:120px; font-weight:bold; color:var(--leaf-green);'>Melihat pohon tumbuh...</p>";
-
-            try {
-                const res = await fetch(API_URL);
-                allData = await res.json();
-                
-                const groups = {};
-                allData.forEach(d => {
-                    if(!d.Penerima) return;
-                    const key = d.Penerima.toLowerCase().trim();
-                    if(!groups[key]) {
-                        groups[key] = { 
-                            displayName: d.Penerima.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '), 
-                            messages: [] 
-                        };
-                    }
-                    groups[key].messages.push({ text: d.Ucapan, from: d.Pengirim });
-                });
-
-                layer.innerHTML = "";
-                Object.values(groups).forEach((g, i) => renderApple(g, i));
-            } catch(e) { 
-                layer.innerHTML = "<p style='text-align:center; color:red; padding-top:100px;'>Gagal memuat pohon.</p>"; 
-            }
-        }
-        */
         async function loadTreeData() {
             const layer = document.getElementById('apples-layer');
-            const selectPengirim = document.getElementById('in-pengirim');
-            const selectPenerima = document.getElementById('in-penerima');
+            const selPgr = document.getElementById('in-pengirim');
+            const selPnr = document.getElementById('in-penerima');
             
-            layer.innerHTML = "<p style='text-align:center; padding-top:120px;'>Menyiapkan pohon...</p>";
-        
             try {
                 const res = await fetch(API_URL);
                 const dataJson = await res.json();
                 
                 allData = dataJson.apresiasi;
                 const listKaryawan = dataJson.karyawan;
-        
-                // --- ISI DROPDOWN ---
-                // Bersihkan dropdown kecuali opsi pertama
-                selectPengirim.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
-                selectPenerima.innerHTML = '<option value="">-- Pilih Nama Rekan --</option>';
+
+                // Update Dropdown
+                const optHtml = '<option value="">-- Pilih Nama --</option>' + 
+                    listKaryawan.map(n => `<option value="${n}">${n}</option>`).join('');
+                selPgr.innerHTML = selPnr.innerHTML = optHtml;
+
+                // Hitung Statistik
+                const uniquePengirim = new Set(allData.map(d => d.Pengirim)).size;
+                const uniquePenerima = new Set(allData.map(d => d.Penerima)).size;
                 
-                listKaryawan.forEach(nama => {
-                    let opt1 = document.createElement('option');
-                    opt1.value = opt1.text = nama;
-                    selectPengirim.add(opt1);
-        
-                    let opt2 = document.createElement('option');
-                    opt2.value = opt2.text = nama;
-                    selectPenerima.add(opt2);
-                });
-        
-                // --- RENDER POHON ---
+                document.getElementById('stat-pengirim').innerText = uniquePengirim;
+                document.getElementById('stat-penerima').innerText = uniquePenerima;
+                document.getElementById('stat-total').innerText = allData.length;
+
+                // Grouping Data untuk Pohon
                 const groups = {};
                 allData.forEach(d => {
                     if(!d.Penerima) return;
                     const key = d.Penerima.toLowerCase().trim();
                     if(!groups[key]) {
-                        groups[key] = { 
-                            displayName: d.Penerima, 
-                            messages: [] 
-                        };
+                        groups[key] = { displayName: d.Penerima, messages: [] };
                     }
-                    groups[key].messages.push({ text: d.Ucapan });
+                    // FIX: Masukkan pengirim ke dalam array messages
+                    groups[key].messages.push({ text: d.Ucapan, from: d.Pengirim });
                 });
-        
+
                 layer.innerHTML = "";
                 Object.values(groups).forEach((g, i) => renderApple(g, i));
-            } catch(e) { 
-                console.error(e);
-                layer.innerHTML = "<p style='text-align:center; color:red; padding-top:100px;'>Gagal memuat data.</p>"; 
-            }
-        } 
+            } catch(e) { console.error(e); }
+        }
 
         function renderApple(group, index) {
             const layer = document.getElementById('apples-layer');
             const count = group.messages.length;
-            const size = Math.min(85 + (count * 15), 150);
+            const size = Math.min(85 + (count * 10), 140);
             
             const wrapper = document.createElement('div');
             wrapper.className = 'apple-wrapper';
-            
             const spots = [{x:50,y:40}, {x:32,y:58}, {x:68,y:58}, {x:50,y:20}, {x:22,y:45}, {x:78,y:45}, {x:40,y:28}, {x:60,y:28}];
             const spot = spots[index % spots.length];
             
-            wrapper.style.left = (spot.x + (Math.sin(index)*12)) + '%';
-            wrapper.style.top = (spot.y + (Math.cos(index)*10)) + '%';
+            wrapper.style.left = spot.x + '%';
+            wrapper.style.top = spot.y + '%';
             
-            // Menggabungkan seluruh pesan untuk teks berjalan
             const combinedText = group.messages.map(m => `• ${m.text}`).join(' | ');
 
             wrapper.innerHTML = `
                 <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                    <path d="M50,15 Q55,0 60,15" stroke="#3e2723" stroke-width="4" fill="none"/>
                     <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
-                    <path d="M52,15 Q70,5 65,20 Q60,25 52,15" fill="#70e000"/>
+                    <path d="M52,15 Q70,5 65,20" fill="none" stroke="#3e2723" stroke-width="3"/>
                 </svg>
                 <div class="apple-content">
                     <div class="apple-name">${group.displayName}</div>
                     <div class="apple-messages-box">
-                        <div class="scroll-text" style="animation-duration: ${Math.max(8, group.messages.length * 3)}s">
-                            ${combinedText}
-                        </div>
+                        <div class="scroll-text">${combinedText}</div>
                     </div>
                 </div>
             `;
@@ -353,17 +270,33 @@
 
         function openModal(group) {
             const m = document.getElementById('modal');
-            document.getElementById('modal-title').innerText = `Kebaikan untuk ${group.displayName}`;
+            document.getElementById('modal-title').innerText = `Untuk ${group.displayName}`;
             const content = document.getElementById('modal-content');
             
             content.innerHTML = group.messages.reverse().map(msg => `
                 <div class="msg-bubble">
-                    <p style="margin:0; font-size:1.1rem;">"${msg.text}"</p>
+                    <p style="margin:0;">"${msg.text}"</p>
                     <span class="msg-from">— Dari: ${msg.from || 'Rekan Setia'}</span>
                 </div>
             `).join('');
-            
             m.style.display = 'flex';
+        }
+
+        function submitApresiasi() {
+            const pgr = document.getElementById('in-pengirim').value;
+            const pnr = document.getElementById('in-penerima').value;
+            const psn = document.getElementById('in-pesan').value;
+            if(!pgr || !pnr || !psn) return alert("Lengkapi data!");
+
+            document.getElementById('status').innerText = "⏳ Mengirim...";
+            const body = new FormData();
+            body.append('Pengirim', pgr); body.append('Penerima', pnr); body.append('Ucapan', psn);
+
+            fetch(API_URL, { method: 'POST', body: body, mode: 'no-cors' })
+                .then(() => {
+                    alert("🍎 Terkirim!");
+                    location.reload();
+                });
         }
     </script>
 </body>
