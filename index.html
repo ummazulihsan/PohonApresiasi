@@ -130,19 +130,30 @@
         <button class="tab-btn" onclick="showTab('page-tree', this)"> Pohon Kebaikan</button>
     </nav>
 
-    <div id="page-dash" class="page active">
-        <div class="stats-grid">
-            <div class="stat-card"><span class="stat-value" id="s-pgr">0</span><span class="stat-label">Pengirim</span></div>
-            <div class="stat-card"><span class="stat-value" id="s-pnr">0</span><span class="stat-label">Penerima</span></div>
-            <div class="stat-card"><span class="stat-value" id="s-total">0</span><span class="stat-label">Ucapan</span></div>
+   <div id="page-dash" class="page active">
+    <div class="stats-grid">
+        <div class="stat-card"><span class="stat-value" id="s-pgr">0</span><span class="stat-label">Pengirim</span></div>
+        <div class="stat-card"><span class="stat-value" id="s-pnr">0</span><span class="stat-label">Penerima</span></div>
+        <div class="stat-card"><span class="stat-value" id="s-total">0</span><span class="stat-label">Ucapan</span></div>
+    </div>
+
+    <div class="leaderboard-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px;">
+        <div class="leaderboard">
+            <h3>🏆 Top 5 Penerima Apresiasi</h3>
+            <div id="leaderboard-penerima"></div>
         </div>
 
         <div class="leaderboard">
-            <h3>Top 5 Penerima Apresiasi</h3>
-            <div id="leaderboard-list">
-                </div>
+            <h3>🌟 Top 5 Pengirim Apresiasi Teraktif</h3>
+            <div id="leaderboard-pengirim"></div>
         </div>
     </div>
+</div>
+
+<footer style="margin-top: auto; padding: 20px; text-align: center; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: var(--leaf-green); font-weight: bold; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.3);">
+    <p style="margin: 5px 0;">BERARTI v2.0 © 2026</p>
+    <p style="margin: 0; font-weight: normal; opacity: 0.8;">Developed with ❤️ by Ummazulihsan</p>
+</footer>
 
     <div id="page-input" class="page">
         <div class="card">
@@ -236,31 +247,47 @@
             } catch(e) { console.error("Gagal memuat data", e); }
         }
 
-        function processDashboard() {
-            const counts = {};
-            const pengirims = new Set();
-            const penerimas = new Set();
-
-            allData.forEach(d => {
-                pengirims.add(d.Pengirim);
-                penerimas.add(d.Penerima);
-                counts[d.Penerima] = (counts[d.Penerima] || 0) + 1;
-            });
-
-            document.getElementById('s-pgr').innerText = pengirims.size;
-            document.getElementById('s-pnr').innerText = penerimas.size;
-            document.getElementById('s-total').innerText = allData.length;
-
-            const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-            const lbList = document.getElementById('leaderboard-list');
-            lbList.innerHTML = sorted.length ? sorted.map((item, i) => `
-                <div class="leader-item">
-                    <span class="leader-rank ${i < 3 ? 'top-3' : ''}">${i+1}</span>
-                    <span class="leader-name">${item[0]}</span>
-                    <span class="leader-count">${item[1]} Kebaikan</span>
-                </div>
-            `).join('') : '<p style="text-align:center; color:#999;">Belum ada data apresiasi.</p>';
-        }
+       function processDashboard() {
+                const countPenerima = {};
+                const countPengirim = {};
+                const setPengirim = new Set();
+                const setPenerima = new Set();
+            
+                allData.forEach(d => {
+                    // Hitung untuk Penerima
+                    setPenerima.add(d.Penerima);
+                    countPenerima[d.Penerima] = (countPenerima[d.Penerima] || 0) + 1;
+            
+                    // Hitung untuk Pengirim
+                    setPengirim.add(d.Pengirim);
+                    countPengirim[d.Pengirim] = (countPengirim[d.Pengirim] || 0) + 1;
+                });
+            
+                // Update Angka Statistik Utama
+                document.getElementById('s-pgr').innerText = setPengirim.size;
+                document.getElementById('s-pnr').innerText = setPenerima.size;
+                document.getElementById('s-total').innerText = allData.length;
+            
+                // Fungsi Helper untuk merender list leaderboard
+                const renderList = (dataObj, elementId, unit) => {
+                    const sorted = Object.entries(dataObj)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    const container = document.getElementById(elementId);
+                    container.innerHTML = sorted.length ? sorted.map((item, i) => `
+                        <div class="leader-item">
+                            <span class="leader-rank ${i < 3 ? 'top-3' : ''}">${i+1}</span>
+                            <span class="leader-name">${item[0]}</span>
+                            <span class="leader-count">${item[1]} ${unit}</span>
+                        </div>
+                    `).join('') : '<p style="text-align:center; color:#999; font-size:0.8rem;">Belum ada data.</p>';
+                };
+            
+                // Render kedua leaderboard
+                renderList(countPenerima, 'leaderboard-penerima', 'Apresiasi');
+                renderList(countPengirim, 'leaderboard-pengirim', 'Kiriman');
+            }
 
     // ... (Bagian atas kode, setupTab, submitForm, dll tetap sama) ...
 
