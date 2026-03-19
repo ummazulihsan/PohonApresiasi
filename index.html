@@ -17,6 +17,43 @@
             --shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
 
+        /* --- STYLE UNTUK SEARCH --- */
+            .search-wrapper { 
+                width: 100%; 
+                max-width: 400px; 
+                margin-bottom: 20px; 
+                position: relative; 
+                z-index: 50; 
+            }
+            .search-input { 
+                width: 100%; 
+                padding: 12px 40px 12px 15px; 
+                border-radius: 25px; 
+                border: 2px solid var(--leaf-green); 
+                outline: none; 
+                box-shadow: var(--shadow); 
+                font-size: 1rem; 
+            }
+            .search-wrapper i { 
+                position: absolute; 
+                right: 15px; 
+                top: 15px; 
+                color: var(--leaf-green); 
+            }
+            
+            /* Efek saat apel ditemukan dalam pencarian */
+            .apple-wrapper { transition: all 0.4s ease; }
+            .apple-wrapper.highlight { 
+                transform: translate(-50%, -50%) scale(1.6); 
+                z-index: 100 !important; 
+                filter: drop-shadow(0 0 15px gold); 
+            }
+            .apple-wrapper.fade { 
+                opacity: 0.15; 
+                transform: translate(-50%, -50%) scale(0.8); 
+                pointer-events: none; 
+            }
+
         /* --- BASE LAYOUT (Sticky Footer Logic) --- */
         html, body {
             height: 100%;
@@ -213,6 +250,10 @@
         </div>
 
         <div id="page-tree" class="page">
+            <div class="search-wrapper">
+                <input type="text" id="tree-search" class="search-input" placeholder="Cari nama penerima..." oninput="searchApple()">
+                <i class="fas fa-search"></i>
+            </div>
             <div id="tree-container">
                 <svg id="dynamic-tree" viewBox="0 0 500 500" style="width:100%; height:100%; transition: all 1s ease;">
                     <path d="M230,500 L270,500 L260,350 L240,350 Z" fill="var(--trunk-brown)"/>
@@ -249,7 +290,10 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             btn.classList.add('active');
-            if(pageId === 'page-tree') renderTree();
+            if(pageId === 'page-tree') {
+                renderTree();
+                document.getElementById('tree-search').value = ""; // Reset input
+            }
         }
 
         const bgMusic = document.getElementById('bgMusic');
@@ -325,6 +369,11 @@
             const branchGroup = document.getElementById('tree-branches');
             const leafGroup = document.getElementById('tree-leaves');
             const treeSvg = document.getElementById('dynamic-tree');
+            const apple = document.createElement('div');
+            apple.className = 'apple-wrapper';
+
+            // TAMBAHKAN BARIS INI:
+            apple.setAttribute('data-name', nama);
 
             layer.innerHTML = "";
             branchGroup.innerHTML = "";
@@ -442,6 +491,27 @@
             fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
                 stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
                 setTimeout(() => { location.reload(); }, 1000);
+            });
+        }
+
+        function searchApple() {
+            const query = document.getElementById('tree-search').value.toLowerCase();
+            const apples = document.querySelectorAll('.apple-wrapper');
+        
+            apples.forEach(apple => {
+                const name = apple.getAttribute('data-name').toLowerCase();
+                if (query === "") {
+                    // Jika kosong, kembalikan ke normal
+                    apple.classList.remove('highlight', 'fade');
+                } else if (name.includes(query)) {
+                    // Jika cocok, beri highlight
+                    apple.classList.add('highlight');
+                    apple.classList.remove('fade');
+                } else {
+                    // Jika tidak cocok, redupkan
+                    apple.classList.add('fade');
+                    apple.classList.remove('highlight');
+                }
             });
         }
     </script>
