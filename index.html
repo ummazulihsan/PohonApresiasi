@@ -84,26 +84,45 @@
 
         /* DASHBOARD STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; width: 100%; max-width: 700px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); }
+        .stat-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.3s;}
+        .stat-card:hover { transform: translateY(-5px); }
         .stat-value { display: block; font-size: 2.2rem; font-weight: 900; color: var(--leaf-green); }
-        
+        .stat-label { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        .leaderboard-wrapper {
+            width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 25px;
+        }
+        .leaderboard h3 { margin-top: 0; color: var(--leaf-green); font-size: 1.4rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
         .leaderboard { background: white; width: 100%; border-radius: 25px; padding: 30px; box-shadow: var(--shadow); margin-bottom: 20px; box-sizing: border-box; }
         .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .leader-rank { font-weight: 900; color: #bbb; width: 40px; }
+        .leader-rank.top-3 { color: #f1c40f; font-size: 1.3rem; }
+        .leader-name { flex-grow: 1; font-weight: 600; color: #333; }
         .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 5px 12px; border-radius: 15px; font-weight: bold; }
 
-        /* FORM */
-        .card { background: var(--white-glass); padding: 35px; border-radius: 25px; width: 100%; max-width: 450px; box-shadow: var(--shadow); backdrop-filter: blur(10px); box-sizing: border-box; }
-        .input-group { margin-bottom: 15px; }
-        .card select, .card textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 12px; outline: none; box-sizing: border-box; }
-        .btn { background: var(--leaf-green); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
+         /* --- TAB 2: INPUT FORM --- */
+        .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); box-sizing: border-box; }
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); }
+        .input-group i { position: absolute; left: 15px; top: 40px; color: #888; }
+        .card select, .card textarea { width: 100%; padding: 14px 14px 14px 45px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; background: white; box-sizing: border-box; }
+        .card textarea { padding-left: 15px; }
+        .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #1b4332; transform: translateY(-3px); }
 
+        
         /* TREE */
         #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; }
         #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
         .apple-wrapper { position: absolute; transform: translate(-50%, -50%); cursor: pointer; text-align: center; }
         .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 38%; width: 85%; left: 50%; transform: translate(-50%, -50%); text-shadow: 1px 1px 3px black; pointer-events: none; }
 
-        footer { width: 100%; padding: 25px; text-align: center; background: rgba(255,255,255,0.2); color: var(--leaf-green); box-sizing: border-box; }
+        footer {
+            flex-shrink: 0; width: 100%; padding: 30px 20px; text-align: center;
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3); box-sizing: border-box;
+            color: var(--leaf-green);
+        }
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-card { background: white; width: 90%; max-width: 450px; padding: 30px; border-radius: 25px; max-height: 70vh; overflow-y: auto; }
         .msg-bubble { background: #f8fdfa; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--apple-red); font-style: italic; }
@@ -113,10 +132,17 @@
 
     <audio id="bgMusic" loop><source src="rimbun-kebaikan.mp3" type="audio/mpeg"></audio>
 
+     <div id="music-control" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: white; padding: 10px; border-radius: 50%; cursor: pointer; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+        <i id="music-icon" class="fas fa-volume-mute" style="color: var(--leaf-green);"></i>
+    </div>
+
     <div class="main-content">
         <header>
             <h1 class="app-title">BERARTI</h1>
             <p class="app-subtitle">(Berbagi Apresiasi dari Hati)</p>
+            <div class="quote-container">
+                <p class="quote-text">"Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis."</p>
+            </div>
         </header>
 
         <nav class="tab-bar">
@@ -129,22 +155,34 @@
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-value" id="s-pgr">0</span>Pengirim</div>
                 <div class="stat-card"><span class="stat-value" id="s-pnr">0</span>Penerima</div>
-                <div class="stat-card"><span class="stat-value" id="s-total">0</span>Total</div>
+                <div class="stat-card"><span class="stat-value" id="s-total">0</span>Ucapan</div>
             </div>
-            <div class="leaderboard"><h3>🏆 Top Penerima</h3><div id="leaderboard-penerima"></div></div>
-            <div class="leaderboard"><h3>🌟 Top Pengirim</h3><div id="leaderboard-pengirim"></div></div>
+            <div class="leaderboard"><h3>🏆 Top 5 Penerima Apresiasi</h3><div id="leaderboard-penerima"></div></div>
+            <div class="leaderboard"><h3>🌟 Top 5 Pengirim Apresiasi</h3><div id="leaderboard-pengirim"></div></div>
         </div>
 
-        <div id="page-input" class="page">
+         <div id="page-input" class="page">
             <div class="card">
-                <div class="input-group"><label>Pengirim:</label><select id="in-pengirim"></select></div>
-                <div class="input-group"><label>Penerima:</label><select id="in-penerima"></select></div>
-                <div class="input-group"><label>Pesan:</label><textarea id="in-pesan" rows="4"></textarea></div>
-                <button class="btn" onclick="submitApresiasi()">Gantungkan Pesan 🍎</button>
-                <div id="status" style="margin-top:10px; text-align:center;"></div>
+                <h2 style="text-align:center; color:var(--leaf-green); margin-top:0;">Kirim Pesan Kebaikan</h2>
+                <div class="input-group">
+                    <label>Namamu (Pengirim)</label>
+                    <i class="fa fa-user"></i>
+                    <select id="in-pengirim"><option value="">Memuat nama...</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Untuk Siapa? (Penerima)</label>
+                    <i class="fa fa-heart"></i>
+                    <select id="in-penerima"><option value="">Memuat nama...</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Apresiasi Tulusmu</label>
+                    <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
+                </div>
+                <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
+                <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
             </div>
         </div>
-
+        
         <div id="page-tree" class="page">
             <div class="search-wrapper">
                 <input type="text" id="tree-search" class="search-input" placeholder="Cari nama penerima..." oninput="searchApple()">
@@ -161,8 +199,11 @@
         </div>
     </div>
 
-    <footer>
-        <p><b>BERARTI</b> - BPS Provinsi Kep. Bangka Belitung © 2026</p>
+   <footer>
+        <p style="margin: 0; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
+        <div style="width: 40px; height: 2px; background: var(--apple-red); margin: 10px auto;"></div>
+        <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">Developed with ❤️ Ummazulihsan</p>
+        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Provinsi Kep. Bangka Belitung © 2026</p>
     </footer>
 
     <div id="modal" onclick="this.style.display='none'">
@@ -189,18 +230,41 @@
             }
         }
 
+         const bgMusic = document.getElementById('bgMusic');
+        const musicIcon = document.getElementById('music-icon');
+        
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+            } else {
+                bgMusic.pause();
+                musicIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
+            }
+        }
+        
+        document.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+            }
+        }, { once: true });
+
         async function refreshData() {
             try {
                 const res = await fetch(API_URL);
                 const json = await res.json();
                 allData = json.apresiasi;
-                const html = '<option value="">-- Pilih Nama --</option>' + json.karyawan.map(n => `<option value="${n}">${n}</option>`).join('');
-                document.getElementById('in-pengirim').innerHTML = html;
-                document.getElementById('in-penerima').innerHTML = html;
-                processDashboard();
-            } catch(e) { console.error(e); }
-        }
 
+                const list = json.karyawan;
+                const dropdowns = [document.getElementById('in-pengirim'), document.getElementById('in-penerima')];
+                const html = '<option value="">-- Pilih Nama --</option>' + list.map(n => `<option value="${n}">${n}</option>`).join('');
+                dropdowns.forEach(d => d.innerHTML = html);
+
+                processDashboard();
+            } catch(e) { console.error("Gagal memuat data", e); }
+        }
+        
         function processDashboard() {
             const cPnr = {}, cPgr = {};
             allData.forEach(d => {
@@ -313,7 +377,7 @@
             document.getElementById('status').innerText = "⏳ Mengirim...";
             const fd = new FormData(); fd.append('Pengirim', pgr); fd.append('Penerima', pnr); fd.append('Ucapan', psn);
             fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
-                document.getElementById('status').innerText = "🍎 Berhasil!";
+                document.getElementById('status').innerText = "🍎 Berhasil! Buahmu telah tergantung";
                 setTimeout(() => location.reload(), 1000);
             });
         }
