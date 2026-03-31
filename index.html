@@ -372,15 +372,43 @@
         }
 
         function submitApresiasi() {
-            const pgr = document.getElementById('in-pengirim').value, pnr = document.getElementById('in-penerima').value, psn = document.getElementById('in-pesan').value;
-            if(!pgr || !pnr || !psn) return alert("Mohon isi semua data!");
-            document.getElementById('status').innerText = "⏳ Mengirim...";
-            const fd = new FormData(); fd.append('Pengirim', pgr); fd.append('Penerima', pnr); fd.append('Ucapan', psn);
-            fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
-                document.getElementById('status').innerText = "🍎 Berhasil! Buahmu telah tergantung";
-                setTimeout(() => location.reload(), 1000);
-            });
-        }
+                const pgr = document.getElementById('in-pengirim').value;
+                const pnr = document.getElementById('in-penerima').value;
+                const psn = document.getElementById('in-pesan').value;
+                const stat = document.getElementById('status');
+            
+                // 1. Validasi Kelengkapan
+                if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
+            
+                // 2. RULE: Tidak bisa mengirim ke diri sendiri
+                if(pgr === pnr) {
+                    alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
+                    return;
+                }
+            
+                // 3. RULE: Tidak bisa mengirim ke orang yang sama lebih dari satu kali
+                const sudahPernah = allData.some(d => d.Pengirim === pgr && d.Penerima === pnr);
+                if(sudahPernah) {
+                    alert(`Anda sudah pernah mengirimkan apresiasi kepada ${pnr}. Yuk, cari rekan lain yang ingin diapresiasi! 🍎`);
+                    return;
+                }
+            
+                // Jika lolos semua rule, baru kirim
+                stat.innerText = "⏳ Sedang menggantungkan buah...";
+                const fd = new FormData();
+                fd.append('Pengirim', pgr); 
+                fd.append('Penerima', pnr); 
+                fd.append('Ucapan', psn);
+            
+                fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
+                    stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
+                    setTimeout(() => { location.reload(); }, 1000);
+                }).catch(err => {
+                    alert("Terjadi kesalahan saat mengirim.");
+                    stat.innerText = "";
+                });
+            }
+        
     </script>
 </body>
 </html>
