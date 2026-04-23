@@ -211,10 +211,18 @@
         </div>
         
         <div id="page-tree" class="page">
-            <div class="search-wrapper">
-                <input type="text" id="tree-search" class="search-input" placeholder="Cari nama penerima..." oninput="searchApple()">
-                <i class="fas fa-search"></i>
-            </div>
+            <div class="search-wrapper" style="display: flex; gap: 10px; max-width: 600px;">
+                <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
+                    <option value="1">Pohon TW 1</option>
+                    <option value="2">Pohon TW 2</option>
+                    <option value="3">Pohon TW 3</option>
+                    <option value="4">Pohon TW 4</option>
+                </select>
+                <div style="position: relative; flex: 1;">
+                    <input type="text" id="tree-search" class="search-input" placeholder="Cari nama penerima..." oninput="searchApple()">
+                    <i class="fas fa-search"></i>
+                </div>
+            
             <div id="tree-container">
                 <svg id="dynamic-tree" viewBox="0 0 500 500" style="width:100%; height:100%; transition: 1s;">
                     <path d="M230,500 L270,500 L260,350 L240,350 Z" fill="var(--trunk-brown)"/>
@@ -223,6 +231,7 @@
                 </svg>
                 <div id="apples-layer"></div>
             </div>
+        <h3 id="current-tw-title" style="color: var(--leaf-green); margin-top: 15px;">Tampilan: Triwulan 1</h3>
         </div>
     </div>
 
@@ -292,7 +301,7 @@
             } catch(e) { console.error("Gagal memuat data", e); }
         }
         
-        function processDashboard() {
+        /*function processDashboard() {
             const cPnr = {}, cPgr = {};
             allData.forEach(d => {
                 cPnr[d.Penerima] = (cPnr[d.Penerima] || 0) + 1;
@@ -308,7 +317,47 @@
             };
             renderL(cPnr, 'leaderboard-penerima', 'Apresiasi');
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
+        }*/
+
+        function processDashboard() {
+            if (!allData || allData.length === 0) return; // Cegah error jika data kosong
+        
+            const countPenerima = {};
+            const countPengirim = {};
+            const setPengirim = new Set();
+            const setPenerima = new Set();
+        
+            allData.forEach(d => {
+                // Gunakan nama kolom sesuai di Spreadsheet Anda
+                if (d.Penerima) {
+                    setPenerima.add(d.Penerima);
+                    countPenerima[d.Penerima] = (countPenerima[d.Penerima] || 0) + 1;
+                }
+                if (d.Pengirim) {
+                    setPengirim.add(d.Pengirim);
+                    countPengirim[d.Pengirim] = (countPengirim[d.Pengirim] || 0) + 1;
+                }
+            });
+        
+            // Update elemen angka
+            document.getElementById('s-pgr').innerText = setPengirim.size;
+            document.getElementById('s-pnr').innerText = setPenerima.size;
+            document.getElementById('s-total').innerText = allData.length;
+        
+            // Render list (Top 5)
+            renderLeaderboard(countPenerima, 'leaderboard-penerima', 'Apresiasi');
+            renderLeaderboard(countPengirim, 'leaderboard-pengirim', 'Kiriman');
         }
+
+        // Fungsi untuk mengecek TW berdasarkan tanggal (Timestamp)
+            function getQuarter(dateString) {
+                const date = new Date(dateString);
+                const month = date.getMonth(); // 0 = Jan, 11 = Des
+                if (month <= 2) return "1";      // Jan-Mar
+                if (month <= 5) return "2";      // Apr-Jun
+                if (month <= 8) return "3";      // Jul-Sep
+                return "4";                      // Okt-Des
+            }
 
         function searchApple() {
             const query = document.getElementById('tree-search').value.toLowerCase().trim();
@@ -331,8 +380,29 @@
             const layer = document.getElementById('apples-layer');
             const branchGroup = document.getElementById('tree-branches');
             const leafGroup = document.getElementById('tree-leaves');
+            const selectedTW = document.getElementById('tw-selector').value;
+    
+            // Update Judul
+            document.getElementById('current-tw-title').innerText = `Tampilan: Pohon Triwulan ${selectedTW}`;
             layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
 
+            // FILTER DATA: Hanya ambil data yang sesuai TW yang dipilih
+            const filteredData = allData.filter(d => {
+                // Jika di Google Sheets kolom tanggal namanya 'Timestamp'
+                return getQuarter(d.Timestamp) === selectedTW; 
+            });
+        
+            if (filteredData.length === 0) {
+                layer.innerHTML = `<div style="color: #666; margin-top: 50px;">Belum ada apresiasi di TW ${selectedTW} ini.</div>`;
+                return;
+            }
+
+                    // --- SISANYA SAMA SEPERTI KODE LAMA, TAPI GUNAKAN filteredData ---
+            const groups = {};
+            filteredData.forEach(d => { 
+                if(!groups[d.Penerima]) groups[d.Penerima] = []; 
+                groups[d.Penerima].push(d); 
+            });
             const total = allData.length;
             const scale = Math.min(0.7 + (total * 0.03), 1.2);
             document.getElementById('dynamic-tree').style.transform = `scale(${scale})`;
