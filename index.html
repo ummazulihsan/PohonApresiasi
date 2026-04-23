@@ -17,13 +17,15 @@
             --shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
 
-        /* --- STYLE UNTUK SEARCH --- */
+        /* --- STYLE UNTUK SEARCH & FILTER --- */
         .search-wrapper { 
             width: 100%; 
-            max-width: 400px; 
+            max-width: 600px; 
             margin-bottom: 20px; 
+            display: flex;
+            gap: 10px;
             position: relative; 
-            z-index: 150; /* Ditingkatkan agar di atas apel */
+            z-index: 150;
         }
         .search-input { 
             width: 100%; 
@@ -34,14 +36,15 @@
             box-shadow: var(--shadow); 
             font-size: 1rem; 
         }
-        .search-wrapper i { 
+        .search-container-inner { position: relative; flex: 1; }
+        .search-container-inner i { 
             position: absolute; 
             right: 15px; 
             top: 15px; 
             color: var(--leaf-green); 
         }
         
-        /* Efek saat apel ditemukan dalam pencarian */
+        /* Efek Apel */
         .apple-wrapper { transition: all 0.4s ease; z-index: 10; }
         .apple-wrapper.highlight { 
             transform: translate(-50%, -50%) scale(1.8) !important; 
@@ -87,42 +90,25 @@
         .stat-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.3s;}
         .stat-card:hover { transform: translateY(-5px); }
         .stat-value { display: block; font-size: 2.2rem; font-weight: 900; color: var(--leaf-green); }
-        .stat-label { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        .leaderboard-wrapper {
-            width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 25px;
-        }
-        .leaderboard h3 { margin-top: 0; color: var(--leaf-green); font-size: 1.4rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
-        .leaderboard { background: white; width: 100%; border-radius: 25px; padding: 30px; box-shadow: var(--shadow); margin-bottom: 20px; box-sizing: border-box; }
+        .leaderboard { background: white; width: 100%; max-width: 700px; border-radius: 25px; padding: 30px; box-shadow: var(--shadow); margin-bottom: 20px; box-sizing: border-box; }
         .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
-        .leader-rank { font-weight: 900; color: #bbb; width: 40px; }
-        .leader-rank.top-3 { color: #f1c40f; font-size: 1.3rem; }
-        .leader-name { flex-grow: 1; font-weight: 600; color: #333; }
         .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 5px 12px; border-radius: 15px; font-weight: bold; }
 
-         /* --- TAB 2: INPUT FORM --- */
+         /* --- TAB 2: INPUT FORM (LOCK MODE) --- */
         .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); box-sizing: border-box; }
         .input-group { margin-bottom: 20px; position: relative; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); }
-        .input-group i { position: absolute; left: 15px; top: 40px; color: #888; }
-        .card select, .card textarea { width: 100%; padding: 14px 14px 14px 45px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; background: white; box-sizing: border-box; }
-        .card textarea { padding-left: 15px; }
+        .card select, .card textarea { width: 100%; padding: 14px 14px 14px 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; background: white; box-sizing: border-box; }
         .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: #1b4332; transform: translateY(-3px); }
-
         
         /* TREE */
-        #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; }
+        #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; margin-top: 20px; }
         #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
         .apple-wrapper { position: absolute; transform: translate(-50%, -50%); cursor: pointer; text-align: center; }
         .apple-name { position: absolute; color: white; font-weight: bold; font-size: 9px; top: 38%; width: 85%; left: 50%; transform: translate(-50%, -50%); text-shadow: 1px 1px 3px black; pointer-events: none; }
 
-        footer {
-            flex-shrink: 0; width: 100%; padding: 30px 20px; text-align: center;
-            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px);
-            border-top: 1px solid rgba(255, 255, 255, 0.3); box-sizing: border-box;
-            color: var(--leaf-green);
-        }
+        footer { flex-shrink: 0; width: 100%; padding: 30px 20px; text-align: center; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.3); color: var(--leaf-green); box-sizing: border-box; }
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-card { background: white; width: 90%; max-width: 450px; padding: 30px; border-radius: 25px; max-height: 70vh; overflow-y: auto; }
         .msg-bubble { background: #f8fdfa; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--apple-red); font-style: italic; }
@@ -132,7 +118,7 @@
 
     <audio id="bgMusic" loop><source src="rimbun-kebaikan.mp3" type="audio/mpeg"></audio>
 
-     <div id="music-control" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: white; padding: 10px; border-radius: 50%; cursor: pointer; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+    <div id="music-control" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: white; padding: 10px; border-radius: 50%; cursor: pointer; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
         <i id="music-icon" class="fas fa-volume-mute" style="color: var(--leaf-green);"></i>
     </div>
 
@@ -140,9 +126,7 @@
         <header>
             <h1 class="app-title">BERARTI</h1>
             <p class="app-subtitle">(Berbagi Apresiasi dari Hati)</p>
-            <div class="quote-container">
-                <p class="quote-text">"Kebaikan yang terus bertumbuh akan selalu menemukan jalannya. Lakukan kebaikan apa saja, walaupun kecil, suatu saat akan berbuah manis."</p>
-            </div>
+            <p style="font-style: italic; color: #666; max-width: 600px; margin: 0 auto;">"Kebaikan yang terus bertumbuh akan selalu menemukan jalannya."</p>
         </header>
 
         <nav class="tab-bar">
@@ -157,72 +141,49 @@
                 <div class="stat-card"><span class="stat-value" id="s-pnr">0</span>Penerima</div>
                 <div class="stat-card"><span class="stat-value" id="s-total">0</span>Ucapan</div>
             </div>
-            <div class="leaderboard"><h3>🏆 Top 5 Penerima Apresiasi</h3><div id="leaderboard-penerima"></div></div>
-            <div class="leaderboard"><h3>🌟 Top 5 Pengirim Apresiasi</h3><div id="leaderboard-pengirim"></div></div>
+            <div class="leaderboard"><h3>🏆 Top 5 Penerima</h3><div id="leaderboard-penerima"></div></div>
+            <div class="leaderboard"><h3>🌟 Top 5 Pengirim</h3><div id="leaderboard-pengirim"></div></div>
         </div>
-
-        <!-- <div id="page-input" class="page">
-            <div class="card">
-                <h2 style="text-align:center; color:var(--leaf-green); margin-top:0;">Kirim Pesan Kebaikan</h2>
-                <div class="input-group">
-                    <label>Namamu (Pengirim)</label>
-                    <i class="fa fa-user"></i>
-                    <select id="in-pengirim"><option value="">Memuat nama...</option></select>
-                </div>
-                <div class="input-group">
-                    <label>Untuk Siapa? (Penerima)</label>
-                    <i class="fa fa-heart"></i>
-                    <select id="in-penerima"><option value="">Memuat nama...</option></select>
-                </div>
-                <div class="input-group">
-                    <label>Apresiasi Tulusmu</label>
-                    <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
-                </div>
-                <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
-                <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
-            </div>
-        </div>
-        -->
 
         <div id="page-input" class="page">
             <div class="card" style="position: relative; overflow: hidden;">
-                <div style="text-align: center; padding: 20px; background: #fff5f5; border: 2px dashed var(--apple-red); border-radius: 15px;">
+                <div style="text-align: center; padding: 20px; background: #fff5f5; border: 2px dashed var(--apple-red); border-radius: 15px; margin-bottom: 20px;">
                     <i class="fas fa-clock" style="font-size: 3rem; color: var(--apple-red); margin-bottom: 15px;"></i>
-                    <h2 style="color: var(--apple-red); margin: 0 0 10px 0;">Input Ditutup</h2>
+                    <h2 style="color: var(--apple-red); margin: 0 0 10px 0;">Sesi Ditutup</h2>
                     <p style="color: #666; font-size: 0.9rem; line-height: 1.5;">
                         Terima kasih atas antusiasme Anda! <br> 
                         Sesi pengiriman apresiasi saat ini sedang <b>ditutup sementara</b>.
                     </p>
-                    <p style="font-weight: bold; color: var(--leaf-green);">Sampai jumpa di sesi BERARTI berikutnya! 🍎</p>
+                    <p style="font-weight: bold; color: var(--leaf-green);">Sampai jumpa di sesi berikutnya! 🍎</p>
                 </div>
-        
-                <div style="opacity: 0.3; pointer-events: none; margin-top: 20px; filter: grayscale(1);">
+                <div style="opacity: 0.3; pointer-events: none; filter: grayscale(1);">
                     <div class="input-group">
                         <label>Namamu (Pengirim)</label>
-                        <select disabled><option>Fitur sedang nonaktif</option></select>
+                        <select disabled><option>Sesi Nonaktif</option></select>
                     </div>
                     <div class="input-group">
                         <label>Untuk Siapa?</label>
-                        <select disabled><option>Fitur sedang nonaktif</option></select>
+                        <select disabled><option>Sesi Nonaktif</option></select>
                     </div>
-                    <button class="btn" style="background: #ccc; cursor: not-allowed;">Sesi Berakhir</button>
+                    <button class="btn" style="background: #ccc;">Input Ditutup</button>
                 </div>
             </div>
         </div>
-        
+
         <div id="page-tree" class="page">
-            <div class="search-wrapper" style="display: flex; gap: 10px; max-width: 600px;">
+            <div class="search-wrapper">
                 <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
                     <option value="1">Pohon TW 1</option>
                     <option value="2">Pohon TW 2</option>
                     <option value="3">Pohon TW 3</option>
                     <option value="4">Pohon TW 4</option>
                 </select>
-                <div style="position: relative; flex: 1;">
-                    <input type="text" id="tree-search" class="search-input" placeholder="Cari nama penerima..." oninput="searchApple()">
+                <div class="search-container-inner">
+                    <input type="text" id="tree-search" class="search-input" placeholder="Cari nama..." oninput="searchApple()">
                     <i class="fas fa-search"></i>
                 </div>
-            
+            </div>
+            <h3 id="current-tw-title" style="color: var(--leaf-green); margin: 10px 0;">Pohon Triwulan 1</h3>
             <div id="tree-container">
                 <svg id="dynamic-tree" viewBox="0 0 500 500" style="width:100%; height:100%; transition: 1s;">
                     <path d="M230,500 L270,500 L260,350 L240,350 Z" fill="var(--trunk-brown)"/>
@@ -231,15 +192,12 @@
                 </svg>
                 <div id="apples-layer"></div>
             </div>
-        <h3 id="current-tw-title" style="color: var(--leaf-green); margin-top: 15px;">Tampilan: Triwulan 1</h3>
         </div>
     </div>
 
-   <footer>
-        <p style="margin: 0; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
-        <div style="width: 40px; height: 2px; background: var(--apple-red); margin: 10px auto;"></div>
-        <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">Developed with ❤️ Ummazulihsan</p>
-        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Provinsi Kep. Bangka Belitung © 2026</p>
+    <footer>
+        <p style="margin: 0; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
+        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Kep. Bangka Belitung © 2026</p>
     </footer>
 
     <div id="modal" onclick="this.style.display='none'">
@@ -260,55 +218,37 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             btn.classList.add('active');
-            if(pageId === 'page-tree') {
-                renderTree();
-                document.getElementById('tree-search').value = ""; 
-            }
+            if(pageId === 'page-tree') renderTree();
         }
 
-         const bgMusic = document.getElementById('bgMusic');
+        const bgMusic = document.getElementById('bgMusic');
         const musicIcon = document.getElementById('music-icon');
         
         function toggleMusic() {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
-            } else {
-                bgMusic.pause();
-                musicIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
-            }
+            if (bgMusic.paused) { bgMusic.play(); musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up'); }
+            else { bgMusic.pause(); musicIcon.classList.replace('fa-volume-up', 'fa-volume-mute'); }
         }
-        
-        document.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
-            }
-        }, { once: true });
 
         async function refreshData() {
             try {
                 const res = await fetch(API_URL);
                 const json = await res.json();
-                allData = json.apresiasi;
-
-                const list = json.karyawan;
-                const dropdowns = [document.getElementById('in-pengirim'), document.getElementById('in-penerima')];
-                const html = '<option value="">-- Pilih Nama --</option>' + list.map(n => `<option value="${n}">${n}</option>`).join('');
-                dropdowns.forEach(d => d.innerHTML = html);
-
+                allData = json.apresiasi || [];
                 processDashboard();
             } catch(e) { console.error("Gagal memuat data", e); }
         }
-        
-        /*function processDashboard() {
-            const cPnr = {}, cPgr = {};
+
+        function processDashboard() {
+            if (!allData.length) return;
+            const cPnr = {}, cPgr = {}, setPgr = new Set(), setPnr = new Set();
             allData.forEach(d => {
-                cPnr[d.Penerima] = (cPnr[d.Penerima] || 0) + 1;
-                cPgr[d.Pengirim] = (cPgr[d.Pengirim] || 0) + 1;
+                const pnr = d.Penerima || d.penerima;
+                const pgr = d.Pengirim || d.pengirim;
+                if(pnr) { setPnr.add(pnr); cPnr[pnr] = (cPnr[pnr] || 0) + 1; }
+                if(pgr) { setPgr.add(pgr); cPgr[pgr] = (cPgr[pgr] || 0) + 1; }
             });
-            document.getElementById('s-pgr').innerText = Object.keys(cPgr).length;
-            document.getElementById('s-pnr').innerText = Object.keys(cPnr).length;
+            document.getElementById('s-pgr').innerText = setPgr.size;
+            document.getElementById('s-pnr').innerText = setPnr.size;
             document.getElementById('s-total').innerText = allData.length;
 
             const renderL = (obj, id, label) => {
@@ -317,62 +257,24 @@
             };
             renderL(cPnr, 'leaderboard-penerima', 'Apresiasi');
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
-        }*/
-
-        function processDashboard() {
-            if (!allData || allData.length === 0) return; // Cegah error jika data kosong
-        
-            const countPenerima = {};
-            const countPengirim = {};
-            const setPengirim = new Set();
-            const setPenerima = new Set();
-        
-            allData.forEach(d => {
-                // Gunakan nama kolom sesuai di Spreadsheet Anda
-                if (d.Penerima) {
-                    setPenerima.add(d.Penerima);
-                    countPenerima[d.Penerima] = (countPenerima[d.Penerima] || 0) + 1;
-                }
-                if (d.Pengirim) {
-                    setPengirim.add(d.Pengirim);
-                    countPengirim[d.Pengirim] = (countPengirim[d.Pengirim] || 0) + 1;
-                }
-            });
-        
-            // Update elemen angka
-            document.getElementById('s-pgr').innerText = setPengirim.size;
-            document.getElementById('s-pnr').innerText = setPenerima.size;
-            document.getElementById('s-total').innerText = allData.length;
-        
-            // Render list (Top 5)
-            renderLeaderboard(countPenerima, 'leaderboard-penerima', 'Apresiasi');
-            renderLeaderboard(countPengirim, 'leaderboard-pengirim', 'Kiriman');
         }
 
-        // Fungsi untuk mengecek TW berdasarkan tanggal (Timestamp)
-            function getQuarter(dateString) {
-                const date = new Date(dateString);
-                const month = date.getMonth(); // 0 = Jan, 11 = Des
-                if (month <= 2) return "1";      // Jan-Mar
-                if (month <= 5) return "2";      // Apr-Jun
-                if (month <= 8) return "3";      // Jul-Sep
-                return "4";                      // Okt-Des
-            }
+        function getQuarter(dateString) {
+            const date = new Date(dateString);
+            const month = date.getMonth();
+            if (month <= 2) return "1";
+            if (month <= 5) return "2";
+            if (month <= 8) return "3";
+            return "4";
+        }
 
         function searchApple() {
-            const query = document.getElementById('tree-search').value.toLowerCase().trim();
-            const apples = document.querySelectorAll('.apple-wrapper');
-            apples.forEach(apple => {
-                const name = apple.getAttribute('data-name').toLowerCase();
-                if (query === "") {
-                    apple.classList.remove('highlight', 'fade');
-                } else if (name.includes(query)) {
-                    apple.classList.add('highlight');
-                    apple.classList.remove('fade');
-                } else {
-                    apple.classList.add('fade');
-                    apple.classList.remove('highlight');
-                }
+            const q = document.getElementById('tree-search').value.toLowerCase().trim();
+            document.querySelectorAll('.apple-wrapper').forEach(a => {
+                const n = a.getAttribute('data-name').toLowerCase();
+                if (q === "") a.classList.remove('highlight', 'fade');
+                else if (n.includes(q)) { a.classList.add('highlight'); a.classList.remove('fade'); }
+                else { a.classList.add('fade'); a.classList.remove('highlight'); }
             });
         }
 
@@ -380,44 +282,34 @@
             const layer = document.getElementById('apples-layer');
             const branchGroup = document.getElementById('tree-branches');
             const leafGroup = document.getElementById('tree-leaves');
-            const selectedTW = document.getElementById('tw-selector').value;
-    
-            // Update Judul
-            document.getElementById('current-tw-title').innerText = `Tampilan: Pohon Triwulan ${selectedTW}`;
+            const selTW = document.getElementById('tw-selector').value;
+            
+            document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW}`;
             layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
 
-            // FILTER DATA: Hanya ambil data yang sesuai TW yang dipilih
-            const filteredData = allData.filter(d => {
-                // Jika di Google Sheets kolom tanggal namanya 'Timestamp'
-                return getQuarter(d.Timestamp) === selectedTW; 
-            });
-        
-            if (filteredData.length === 0) {
-                layer.innerHTML = `<div style="color: #666; margin-top: 50px;">Belum ada apresiasi di TW ${selectedTW} ini.</div>`;
+            const filtered = allData.filter(d => getQuarter(d.Timestamp || d.timestamp) === selTW);
+            if (!filtered.length) {
+                layer.innerHTML = `<div style="color: #666; margin-top: 50px; text-align:center; width:100%;">Belum ada buah di TW ini.</div>`;
                 return;
             }
 
-                    // --- SISANYA SAMA SEPERTI KODE LAMA, TAPI GUNAKAN filteredData ---
             const groups = {};
-            filteredData.forEach(d => { 
-                if(!groups[d.Penerima]) groups[d.Penerima] = []; 
-                groups[d.Penerima].push(d); 
+            filtered.forEach(d => { 
+                const p = d.Penerima || d.penerima;
+                if(!groups[p]) groups[p] = []; 
+                groups[p].push(d); 
             });
-            const total = allData.length;
-            const scale = Math.min(0.7 + (total * 0.03), 1.2);
-            document.getElementById('dynamic-tree').style.transform = `scale(${scale})`;
 
             const levels = [
                 { d: "M250,380 L250,230", r: 90, c: "#1a4731" },
                 { d: "M250,330 Q160,280 130,310", r: 80, c: "#235e41" },
                 { d: "M250,330 Q340,280 370,310", r: 80, c: "#235e41" },
                 { d: "M250,250 Q180,180 200,120", r: 75, c: "#2f7d56" },
-                { d: "M250,250 Q320,180 300,120", r: 75, c: "#2f7d56" },
-                { d: "M250,180 L250,70", r: 60, c: "#48bb78" }
+                { d: "M250,250 Q320,180 300,120", r: 75, c: "#2f7d56" }
             ];
 
             const activeLeaves = [];
-            const parts = Math.min(6, Math.floor(total/3)+1);
+            const parts = Math.min(levels.length, Math.floor(filtered.length/2)+1);
             for(let i=0; i<parts; i++) {
                 const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 p.setAttribute("d", levels[i].d); branchGroup.appendChild(p);
@@ -429,83 +321,38 @@
                 activeLeaves.push({x: parseFloat(cx), y: parseFloat(cy), r: levels[i].r});
             }
 
-            const groups = {};
-            allData.forEach(d => { if(!groups[d.Penerima]) groups[d.Penerima] = []; groups[d.Penerima].push(d); });
-
             const placed = [];
             Object.keys(groups).forEach(nama => {
                 const count = groups[nama].length;
-                const size = Math.min(50 + (count * 6), 90);
+                const size = Math.min(45 + (count * 5), 80);
                 let pos = null;
                 for(let attempt=0; attempt<50; attempt++) {
                     const leaf = activeLeaves[Math.floor(Math.random()*activeLeaves.length)];
-                    const angle = Math.random()*Math.PI*2, rad = Math.random()*(leaf.r - size/2/scale);
+                    const angle = Math.random()*Math.PI*2, rad = Math.random()*(leaf.r - 20);
                     const x = leaf.x + rad*Math.cos(angle), y = leaf.y + rad*Math.sin(angle);
-                    if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < (size/scale)*0.8)) { pos = {x,y}; break; }
+                    if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < 30)) { pos = {x,y}; break; }
                 }
                 if(!pos) pos = {x: 250, y: 250};
                 placed.push(pos);
 
                 const wrapper = document.createElement('div');
                 wrapper.className = 'apple-wrapper';
-                // ATRIBUT PENTING UNTUK SEARCH:
-                wrapper.setAttribute('data-name', nama); 
-                
+                wrapper.setAttribute('data-name', nama);
                 wrapper.style.left = (pos.x/500*100)+'%';
                 wrapper.style.top = (pos.y/500*100)+'%';
                 wrapper.innerHTML = `
                     <svg width="${size}" height="${size}" viewBox="0 0 100 100">
                         <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
-                        <ellipse cx="30" cy="35" rx="6" ry="10" fill="white" opacity="0.3" transform="rotate(-30 30 35)"/>
                     </svg><div class="apple-name">${nama}</div>
                 `;
                 wrapper.onclick = () => {
                     document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
-                    document.getElementById('modal-content').innerHTML = groups[nama].map(m => `<div class="msg-bubble">"${m.Ucapan}"</div>`).join('');
+                    document.getElementById('modal-content').innerHTML = groups[nama].map(m => `<div class="msg-bubble">"${m.Ucapan || m.ucapan}"</div>`).join('');
                     document.getElementById('modal').style.display = 'flex';
                 };
                 layer.appendChild(wrapper);
             });
         }
-
-        function submitApresiasi() {
-                const pgr = document.getElementById('in-pengirim').value;
-                const pnr = document.getElementById('in-penerima').value;
-                const psn = document.getElementById('in-pesan').value;
-                const stat = document.getElementById('status');
-            
-                // 1. Validasi Kelengkapan
-                if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
-            
-                // 2. RULE: Tidak bisa mengirim ke diri sendiri
-                if(pgr === pnr) {
-                    alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
-                    return;
-                }
-            
-                // 3. RULE: Tidak bisa mengirim ke orang yang sama lebih dari satu kali
-                const sudahPernah = allData.some(d => d.Pengirim === pgr && d.Penerima === pnr);
-                if(sudahPernah) {
-                    alert(`Anda sudah pernah mengirimkan apresiasi kepada ${pnr}. Yuk, cari rekan lain yang ingin diapresiasi! 🍎`);
-                    return;
-                }
-            
-                // Jika lolos semua rule, baru kirim
-                stat.innerText = "⏳ Sedang menggantungkan buah...";
-                const fd = new FormData();
-                fd.append('Pengirim', pgr); 
-                fd.append('Penerima', pnr); 
-                fd.append('Ucapan', psn);
-            
-                fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
-                    stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
-                    setTimeout(() => { location.reload(); }, 1000);
-                }).catch(err => {
-                    alert("Terjadi kesalahan saat mengirim.");
-                    stat.innerText = "";
-                });
-            }
-        
     </script>
 </body>
 </html>
