@@ -170,6 +170,30 @@
             </div>
         </div>
 
+//ini klo pengisian diaktifkan
+        <!-- <div id="page-input" class="page">
+            <div class="card">
+                <h2 style="text-align:center; color:var(--leaf-green); margin-top:0;">Kirim Pesan Kebaikan</h2>
+                <div class="input-group">
+                    <label>Namamu (Pengirim)</label>
+                    <i class="fa fa-user"></i>
+                    <select id="in-pengirim"><option value="">Memuat nama...</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Untuk Siapa? (Penerima)</label>
+                    <i class="fa fa-heart"></i>
+                    <select id="in-penerima"><option value="">Memuat nama...</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Apresiasi Tulusmu</label>
+                    <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
+                </div>
+                <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
+                <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
+            </div>
+        </div>
+        -->
+
         <div id="page-tree" class="page">
             <div class="search-wrapper">
                 <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
@@ -196,8 +220,10 @@
     </div>
 
     <footer>
-        <p style="margin: 0; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
-        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Kep. Bangka Belitung © 2026</p>
+        <p style="margin: 0; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
+        <div style="width: 40px; height: 2px; background: var(--apple-red); margin: 10px auto;"></div>
+        <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">Developed with ❤️ Ummazulihsan</p>
+        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Provinsi Kep. Bangka Belitung © 2026</p>
     </footer>
 
     <div id="modal" onclick="this.style.display='none'">
@@ -228,6 +254,13 @@
             if (bgMusic.paused) { bgMusic.play(); musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up'); }
             else { bgMusic.pause(); musicIcon.classList.replace('fa-volume-up', 'fa-volume-mute'); }
         }
+
+        document.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+            }
+        }, { once: true });
 
         async function refreshData() {
             try {
