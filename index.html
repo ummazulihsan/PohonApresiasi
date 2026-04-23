@@ -259,13 +259,31 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-        function getQuarter(dateString) {
+       function getQuarter(dateString) {
+            if (!dateString) return "1"; // Default ke TW 1 jika tanggal kosong
+            
+            // Mencoba parsing tanggal
             const date = new Date(dateString);
-            const month = date.getMonth();
-            if (month <= 2) return "1";
-            if (month <= 5) return "2";
-            if (month <= 8) return "3";
-            return "4";
+            
+            // Jika format tanggal aneh/invalid, kita coba deteksi manual dari string
+            if (isNaN(date.getTime())) {
+                // Asumsi format DD/MM/YYYY atau MM/DD/YYYY, kita ambil angka bulannya
+                const match = dateString.match(/\/(\d{1,2})\//);
+                if (match) {
+                    const month = parseInt(match[1]);
+                    if (month <= 3) return "1";
+                    if (month <= 6) return "2";
+                    if (month <= 9) return "3";
+                    return "4";
+                }
+                return "1"; 
+            }
+        
+            const month = date.getMonth(); // 0 = Jan, 11 = Des
+            if (month <= 2) return "1";      // Jan-Mar
+            if (month <= 5) return "2";      // Apr-Jun
+            if (month <= 8) return "3";      // Jul-Sep
+            return "4";                      // Okt-Des
         }
 
         function searchApple() {
@@ -287,11 +305,19 @@
             document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW}`;
             layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
 
-            const filtered = allData.filter(d => getQuarter(d.Timestamp || d.timestamp) === selTW);
-            if (!filtered.length) {
-                layer.innerHTML = `<div style="color: #666; margin-top: 50px; text-align:center; width:100%;">Belum ada buah di TW ini.</div>`;
-                return;
-            }
+           // Filter yang lebih aman (cek Timestamp atau timestamp)
+                const filtered = allData.filter(d => {
+                    const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
+                    return getQuarter(tgl) === selTW;
+                });
+            
+                // Debugging: Munculkan di Console untuk cek apakah data terfilter
+                console.log(`Data untuk TW ${selTW}:`, filtered);
+            
+                if (!filtered.length) {
+                    layer.innerHTML = `<div style="color: #666; margin-top: 50px; text-align:center; width:100%;">Belum ada buah di TW ${selTW} ini.</div>`;
+                    return;
+                }
 
             const groups = {};
             filtered.forEach(d => { 
