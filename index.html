@@ -161,7 +161,7 @@
             <div class="leaderboard"><h3>🌟 Top 5 Pengirim Apresiasi</h3><div id="leaderboard-pengirim"></div></div>
         </div>
 
-         <div id="page-input" class="page">
+        <!-- <div id="page-input" class="page">
             <div class="card">
                 <h2 style="text-align:center; color:var(--leaf-green); margin-top:0;">Kirim Pesan Kebaikan</h2>
                 <div class="input-group">
@@ -180,6 +180,33 @@
                 </div>
                 <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
                 <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
+            </div>
+        </div>
+        -->
+
+        <div id="page-input" class="page">
+            <div class="card" style="position: relative; overflow: hidden;">
+                <div style="text-align: center; padding: 20px; background: #fff5f5; border: 2px dashed var(--apple-red); border-radius: 15px;">
+                    <i class="fas fa-clock" style="font-size: 3rem; color: var(--apple-red); margin-bottom: 15px;"></i>
+                    <h2 style="color: var(--apple-red); margin: 0 0 10px 0;">Input Ditutup</h2>
+                    <p style="color: #666; font-size: 0.9rem; line-height: 1.5;">
+                        Terima kasih atas antusiasme Anda! <br> 
+                        Sesi pengiriman apresiasi saat ini sedang <b>ditutup sementara</b>.
+                    </p>
+                    <p style="font-weight: bold; color: var(--leaf-green);">Sampai jumpa di sesi BERARTI berikutnya! 🍎</p>
+                </div>
+        
+                <div style="opacity: 0.3; pointer-events: none; margin-top: 20px; filter: grayscale(1);">
+                    <div class="input-group">
+                        <label>Namamu (Pengirim)</label>
+                        <select disabled><option>Fitur sedang nonaktif</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Untuk Siapa?</label>
+                        <select disabled><option>Fitur sedang nonaktif</option></select>
+                    </div>
+                    <button class="btn" style="background: #ccc; cursor: not-allowed;">Sesi Berakhir</button>
+                </div>
             </div>
         </div>
         
