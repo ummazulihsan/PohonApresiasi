@@ -284,36 +284,40 @@
         }
 
        function getQuarter(dateString) {
-            if (!dateString) return "1";
-            
-            // 1. Jika input sudah berupa objek Date atau string ISO (contoh: 2026-06-26...)
-            if (typeof dateString === 'string' && dateString.includes('-')) {
-                const month = new Date(dateString).getMonth() + 1;
-                if (month >= 4 && month <= 6) return "2";
-                if (month >= 7 && month <= 9) return "3";
-                if (month >= 10 && month <= 12) return "4";
-                return "1";
-            }
-        
-            // 2. Jika formatnya string database biasa (contoh: 3/25/2026 atau 6/26/2026)
-            // Kita bersihkan dulu spasi di awal/akhir, lalu pecah berdasarkan "/"
-            const cleanStr = String(dateString).trim();
-            const parts = cleanStr.split('/');
-            
-            if (parts.length > 0) {
-                // Mengambil angka pertama sebelum tanda "/" sebagai bulan
-                const month = parseInt(parts[0], 10); 
+                if (!dateString) return "1";
                 
-                if (month >= 1 && month <= 12) {
-                    if (month >= 4 && month <= 6) return "2";   // April - Juni -> TW 2
-                    if (month >= 7 && month <= 9) return "3";   // Juli - September -> TW 3
-                    if (month >= 10 && month <= 12) return "4"; // Oktober - Desember -> TW 4
-                    return "1";                                 // Januari - Maret -> TW 1
+                // 1. Cek format ISO (contoh: 2026-06-26)
+                if (typeof dateString === 'string' && dateString.includes('-')) {
+                    const month = new Date(dateString).getMonth() + 1;
+                    if (month >= 4 && month <= 6) return "2";
+                    if (month >= 7 && month <= 9) return "3";
+                    if (month >= 10 && month <= 12) return "4";
+                    return "1";
                 }
+                
+                // 2. Cek format lokalisasi garis miring (contoh: 26/06/2026)
+                const cleanStr = String(dateString).trim();
+                const parts = cleanStr.split('/');
+                
+                if (parts.length > 1) {
+                    // Ambil bagian tengah (index 1) sebagai default bulan untuk format Indonesia
+                    let month = parseInt(parts[1], 10); 
+                    
+                    // Pencegahan kalau ternyata formatnya dari Google Sheets adalah MM/DD/YYYY
+                    if (parseInt(parts[0], 10) <= 12 && parseInt(parts[1], 10) > 12) {
+                        month = parseInt(parts[0], 10); 
+                    }
+                    
+                    if (month >= 1 && month <= 12) {
+                        if (month >= 4 && month <= 6) return "2";   
+                        if (month >= 7 && month <= 9) return "3";   
+                        if (month >= 10 && month <= 12) return "4"; 
+                        return "1";                                 
+                    }
+                }
+                
+                return "1"; // Fallback default
             }
-            
-            return "1"; // Fallback default
-        }
 
         function searchApple() {
             const q = document.getElementById('tree-search').value.toLowerCase().trim();
@@ -325,130 +329,128 @@
             });
         }
 
-        function renderTree() {
-            const layer = document.getElementById('apples-layer');
-            const branchGroup = document.getElementById('tree-branches');
-            const leafGroup = document.getElementById('tree-leaves');
-            const selTW = document.getElementById('tw-selector').value;
-            
-            // Mengubah nama buah di judul dinamis sesuai Triwulan
-            const namaBuah = selTW === "1" ? "Apel" : selTW === "2" ? "Durian" : selTW === "3" ? "Jeruk" : "Manggis";
-            document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW} (${namaBuah})`;
-            
-            layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
-
-            // Filter data murni per Triwulan terpilih
-            const filtered = allData.filter(d => {
-                const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
-                return getQuarter(tgl) === selTW;
-            });
-
-            if (!filtered.length) {
-                layer.innerHTML = `<div style="color: #444; margin-top: 60px; font-weight: bold; text-align:center; width:100%;">Belum ada buah ${namaBuah} yang tumbuh di TW ${selTW}. Yuk kirim apresiasi!</div>`;
-                return;
-            }
-
-            const treeGroups = {};
-            filtered.forEach(d => { 
-                const p = d.Penerima || d.penerima;
-                if(!treeGroups[p]) treeGroups[p] = []; 
-                treeGroups[p].push(d); 
-            });
-
-            const levels = [
-                { d: "M250,380 L250,230", r: 90, c: "#1a4731" },
-                { d: "M250,330 Q160,280 130,310", r: 80, c: "#235e41" },
-                { d: "M250,330 Q340,280 370,310", r: 80, c: "#235e41" },
-                { d: "M250,250 Q180,180 200,120", r: 75, c: "#2f7d56" },
-                { d: "M250,250 Q320,180 300,120", r: 75, c: "#2f7d56" }
-            ];
-
-            const activeLeaves = [];
-            const parts = Math.min(levels.length, Math.floor(filtered.length/2)+1);
-            for(let i=0; i<parts; i++) {
-                const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                p.setAttribute("d", levels[i].d); branchGroup.appendChild(p);
-                const coords = levels[i].d.split(/[MLQ, ]+/).filter(Boolean);
-                const cx = coords[coords.length-2], cy = coords[coords.length-1];
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("cx", cx); circle.setAttribute("cy", cy); circle.setAttribute("r", levels[i].r);
-                circle.setAttribute("fill", levels[i].c); leafGroup.appendChild(circle);
-                activeLeaves.push({x: parseFloat(cx), y: parseFloat(cy), r: levels[i].r});
-            }
-
-            const placed = [];
-            Object.keys(treeGroups).forEach(nama => {
-                const count = treeGroups[nama].length;
-                const size = Math.min(45 + (count * 5), 80);
-                let pos = null;
-                for(let attempt=0; attempt<50; attempt++) {
-                    const leaf = activeLeaves[Math.floor(Math.random()*activeLeaves.length)];
-                    const angle = Math.random()*Math.PI*2, rad = Math.random()*(leaf.r - 20);
-                    const x = leaf.x + rad*Math.cos(angle), y = leaf.y + rad*Math.sin(angle);
-                    if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < 32)) { pos = {x,y}; break; }
-                }
-                if(!pos) pos = {x: 250, y: 250};
-                placed.push(pos);
-
-                const wrapper = document.createElement('div');
-                wrapper.className = 'apple-wrapper';
-                wrapper.setAttribute('data-name', nama);
-                wrapper.style.left = (pos.x/500*100)+'%';
-                wrapper.style.top = (pos.y/500*100)+'%';
-
-                // DESAIN MODEL SVGBUAH BERDASARKAN TRIWULAN TERPILIH
-                let buahSvg = "";
-                if (selTW === "2") {
-                    // TW 2: DURIAN
-                    buahSvg = `
-                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                            <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
-                            <path d="M50,25 C20,25 15,45 15,65 C15,85 35,95 50,95 C65,95 85,85 85,65 C85,45 80,25 50,25 Z" fill="#85933a"/>
-                            <path d="M30,45 L25,50 L35,52 L30,58 L40,58 L35,68 L45,65 L43,75 L53,70 L55,80 L65,72 L68,80 L75,70 L78,60 L70,58 L72,48 L62,50 L60,40 L50,45 L48,35 Z" fill="#a3b14a"/>
-                        </svg>
-                    `;
-                } else if (selTW === "3") {
-                    // TW 3: JERUK (ORANGE)
-                    buahSvg = `
-                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                            <path d="M50,10 Q55,18 48,25" stroke="#5d4037" stroke-width="3" fill="none"/>
-                            <circle cx="50" cy="58" r="35" fill="#f9844a"/>
-                            <circle cx="50" cy="32" r="3" fill="#43aa8b"/>
-                        </svg>
-                    `;
-                } else if (selTW === "4") {
-                    // TW 4: MANGGIS (PURPLE)
-                    buahSvg = `
-                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                            <path d="M50,12 L50,25" stroke="#43281c" stroke-width="4" fill="none"/>
-                            <circle cx="50" cy="60" r="33" fill="#4c1c5c"/>
-                            <path d="M50,25 Q35,22 38,35 Q50,38 50,25 Q50,38 62,35 Q65,22 50,25" fill="#70e000"/>
-                        </svg>
-                    `;
-                } else {
-                    // TW 1: APEL ASLI (RED)
-                    buahSvg = `
-                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                            <path d="M50,12 Q55,20 48,26" stroke="#5d4037" stroke-width="3" fill="none"/>
-                            <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
-                        </svg>
-                    `;
-                }
-
-                wrapper.innerHTML = buahSvg + `<div class="apple-name">${nama}</div>`;
+       function renderTree() {
+                const layer = document.getElementById('apples-layer');
+                const branchGroup = document.getElementById('tree-branches');
+                const leafGroup = document.getElementById('tree-leaves');
+                const selTW = document.getElementById('tw-selector').value;
                 
-                wrapper.onclick = () => {
-                    // Menyesuaikan warna header pop up sesuai tema triwulan
-                    const modalTitle = document.getElementById('modal-title');
-                    modalTitle.style.color = selTW === "1" ? "var(--apple-red)" : selTW === "2" ? "#85933a" : selTW === "3" ? "#f9844a" : "#4c1c5c";
-                    modalTitle.innerText = `Apresiasi ${namaBuah} untuk ${nama}`;
+                const namaBuah = selTW === "1" ? "Apel" : selTW === "2" ? "Durian" : selTW === "3" ? "Jeruk" : "Manggis";
+                document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW} (${namaBuah})`;
+                
+                layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
+            
+                const filtered = allData.filter(d => {
+                    const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
+                    return getQuarter(tgl) === selTW;
+                });
+            
+                // 1. GAMBAR DAUN & RANTING DULU (Agar pohon tidak gundul meski kosong)
+                const levels = [
+                    { d: "M250,380 L250,230", r: 90, c: "#1a4731" },
+                    { d: "M250,330 Q160,280 130,310", r: 80, c: "#235e41" },
+                    { d: "M250,330 Q340,280 370,310", r: 80, c: "#235e41" },
+                    { d: "M250,250 Q180,180 200,120", r: 75, c: "#2f7d56" },
+                    { d: "M250,250 Q320,180 300,120", r: 75, c: "#2f7d56" }
+                ];
+            
+                const activeLeaves = [];
+                // Beri minimal 3 ranting agar tetap terlihat seperti pohon walau belum ada data
+                const parts = filtered.length === 0 ? 3 : Math.min(levels.length, Math.floor(filtered.length/2)+2);
+                
+                for(let i=0; i<parts; i++) {
+                    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    p.setAttribute("d", levels[i].d); branchGroup.appendChild(p);
+                    const coords = levels[i].d.split(/[MLQ, ]+/).filter(Boolean);
+                    const cx = coords[coords.length-2], cy = coords[coords.length-1];
+                    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    circle.setAttribute("cx", cx); circle.setAttribute("cy", cy); circle.setAttribute("r", levels[i].r);
+                    circle.setAttribute("fill", levels[i].c); leafGroup.appendChild(circle);
+                    activeLeaves.push({x: parseFloat(cx), y: parseFloat(cy), r: levels[i].r});
+                }
+            
+                // 2. CEK JIKA DATA KOSONG KEMUDIAN BERI PESAN
+                if (!filtered.length) {
+                    // Desain pesan diperbarui agar terbaca jelas menimpa daun pohon
+                    layer.innerHTML = `<div style="color: var(--leaf-green); margin-top: 200px; font-weight: bold; text-align:center; width:80%; max-width:400px; margin-left:auto; margin-right:auto; background: rgba(255,255,255,0.85); padding: 15px; border-radius: 15px; box-shadow: var(--shadow);">Belum ada buah ${namaBuah} yang tumbuh di TW ${selTW}. Yuk kirim apresiasi!</div>`;
+                    return;
+                }
+            
+                // 3. RENDER BUAH
+                const treeGroups = {};
+                filtered.forEach(d => { 
+                    const p = d.Penerima || d.penerima;
+                    if(!treeGroups[p]) treeGroups[p] = []; 
+                    treeGroups[p].push(d); 
+                });
+            
+                const placed = [];
+                Object.keys(treeGroups).forEach(nama => {
+                    const count = treeGroups[nama].length;
+                    const size = Math.min(45 + (count * 5), 80);
+                    let pos = null;
+                    for(let attempt=0; attempt<50; attempt++) {
+                        const leaf = activeLeaves[Math.floor(Math.random()*activeLeaves.length)];
+                        const angle = Math.random()*Math.PI*2, rad = Math.random()*(leaf.r - 20);
+                        const x = leaf.x + rad*Math.cos(angle), y = leaf.y + rad*Math.sin(angle);
+                        if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < 32)) { pos = {x,y}; break; }
+                    }
+                    if(!pos) pos = {x: 250, y: 250};
+                    placed.push(pos);
+            
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'apple-wrapper';
+                    wrapper.setAttribute('data-name', nama);
+                    wrapper.style.left = (pos.x/500*100)+'%';
+                    wrapper.style.top = (pos.y/500*100)+'%';
+            
+                    let buahSvg = "";
+                    if (selTW === "2") {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
+                                <path d="M50,25 C20,25 15,45 15,65 C15,85 35,95 50,95 C65,95 85,85 85,65 C85,45 80,25 50,25 Z" fill="#85933a"/>
+                                <path d="M30,45 L25,50 L35,52 L30,58 L40,58 L35,68 L45,65 L43,75 L53,70 L55,80 L65,72 L68,80 L75,70 L78,60 L70,58 L72,48 L62,50 L60,40 L50,45 L48,35 Z" fill="#a3b14a"/>
+                            </svg>
+                        `;
+                    } else if (selTW === "3") {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,10 Q55,18 48,25" stroke="#5d4037" stroke-width="3" fill="none"/>
+                                <circle cx="50" cy="58" r="35" fill="#f9844a"/>
+                                <circle cx="50" cy="32" r="3" fill="#43aa8b"/>
+                            </svg>
+                        `;
+                    } else if (selTW === "4") {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,12 L50,25" stroke="#43281c" stroke-width="4" fill="none"/>
+                                <circle cx="50" cy="60" r="33" fill="#4c1c5c"/>
+                                <path d="M50,25 Q35,22 38,35 Q50,38 50,25 Q50,38 62,35 Q65,22 50,25" fill="#70e000"/>
+                            </svg>
+                        `;
+                    } else {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,12 Q55,20 48,26" stroke="#5d4037" stroke-width="3" fill="none"/>
+                                <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
+                            </svg>
+                        `;
+                    }
+            
+                    wrapper.innerHTML = buahSvg + `<div class="apple-name">${nama}</div>`;
                     
-                    document.getElementById('modal-content').innerHTML = treeGroups[nama].map(m => `<div class="msg-bubble" style="border-left-color:${modalTitle.style.color}">"${m.Ucapan || m.ucapan}"</div>`).join('');
-                    document.getElementById('modal').style.display = 'flex';
-                };
-                layer.appendChild(wrapper);
-            });
-        }
+                    wrapper.onclick = () => {
+                        const modalTitle = document.getElementById('modal-title');
+                        modalTitle.style.color = selTW === "1" ? "var(--apple-red)" : selTW === "2" ? "#85933a" : selTW === "3" ? "#f9844a" : "#4c1c5c";
+                        modalTitle.innerText = `Apresiasi ${namaBuah} untuk ${nama}`;
+                        
+                        document.getElementById('modal-content').innerHTML = treeGroups[nama].map(m => `<div class="msg-bubble" style="border-left-color:${modalTitle.style.color}">"${m.Ucapan || m.ucapan}"</div>`).join('');
+                        document.getElementById('modal').style.display = 'flex';
+                    };
+                    layer.appendChild(wrapper);
+                });
+            }
 
         function submitApresiasi() {
             const pgr = document.getElementById('in-pengirim').value;
