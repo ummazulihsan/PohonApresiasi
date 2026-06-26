@@ -44,7 +44,7 @@
             color: var(--leaf-green); 
         }
         
-        /* Efek Apel */
+        /* Efek Apel / Durian */
         .apple-wrapper { transition: all 0.4s ease; z-index: 10; }
         .apple-wrapper.highlight { 
             transform: translate(-50%, -50%) scale(1.8) !important; 
@@ -99,15 +99,10 @@
         .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); box-sizing: border-box; }
         .input-group { margin-bottom: 20px; position: relative; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); }
-        .card select, .card textarea { width: 100%; padding: 14px 14px 14px 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; background: white; box-sizing: border-box; }
+        .card select, .card textarea { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; background: white; box-sizing: border-box; }
+        .card select:focus, .card textarea:focus { border-color: var(--leaf-green); }
         .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        
-        /* AREA YANG DI-LOCK SAAT TUTUP */
-        .locked-session {
-            opacity: 0.3;
-            pointer-events: none;
-            filter: grayscale(1);
-        }
+        .btn:hover { background: #22523c; }
 
         /* TREE */
         #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; margin-top: 20px; }
@@ -142,6 +137,7 @@
             <button class="tab-btn" onclick="showTab('page-tree', this)">Pohon Kebaikan</button>
         </nav>
 
+        <!-- PAGE 1: DASHBOARD -->
         <div id="page-dash" class="page active">
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-value" id="s-pgr">0</span>Pengirim</div>
@@ -152,37 +148,31 @@
             <div class="leaderboard"><h3>🌟 Top 5 Pengirim</h3><div id="leaderboard-pengirim"></div></div>
         </div>
 
+        <!-- PAGE 2: INPUT (FORMULIR TERBUKA BERFUNGSI) -->
         <div id="page-input" class="page">
             <div class="card">
-                <div style="text-align: center; padding: 20px; background: #fff5f5; border: 2px dashed var(--apple-red); border-radius: 15px; margin-bottom: 20px;">
-                    <i class="fas fa-clock" style="font-size: 3rem; color: var(--apple-red); margin-bottom: 15px;"></i>
-                    <h2 style="color: var(--apple-red); margin: 0 0 10px 0;">Sesi Ditutup</h2>
-                    <p style="color: #666; font-size: 0.9rem; line-height: 1.5;">
-                        Terima kasih atas antusiasme Anda! <br> 
-                        Sesi pengiriman apresiasi saat ini sedang <b>ditutup sementara</b>.
-                    </p>
-                    <p style="font-weight: bold; color: var(--leaf-green);">Sampai jumpa di sesi berikutnya! 🍎</p>
-                </div>
+                <h2 style="color: var(--leaf-green); text-align: center; margin-top: 0; margin-bottom: 25px;"><i class="fas fa-heart"></i> Kirim Apresiasi</h2>
                 
-                <div class="locked-session">
+                <div>
                     <div class="input-group">
                         <label>Namamu (Pengirim)</label>
-                        <select id="in-pengirim" disabled><option>Sesi Nonaktif</option></select>
+                        <select id="in-pengirim"><option value="">Memuat daftar nama...</option></select>
                     </div>
                     <div class="input-group">
                         <label>Untuk Siapa? (Penerima)</label>
-                        <select id="in-penerima" disabled><option>Sesi Nonaktif</option></select>
+                        <select id="in-penerima"><option value="">Memuat daftar nama...</option></select>
                     </div>
                     <div class="input-group">
                         <label>Apresiasi Tulusmu</label>
-                        <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik..." disabled></textarea>
+                        <textarea id="in-pesan" rows="5" placeholder="Tuliskan hal baik atau ucapan terima kasihmu di sini..."></textarea>
                     </div>
-                    <button class="btn" style="background: #ccc;" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
-                    <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
+                    <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
+                    <div id="status" style="margin-top:15px; text-align:center; font-weight:bold; color: var(--leaf-green);"></div>
                 </div>
             </div>
         </div>
 
+        <!-- PAGE 3: POHON -->
         <div id="page-tree" class="page">
             <div class="search-wrapper">
                 <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
@@ -221,7 +211,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbx_qZTHN4pmk6HpU8DwYY65VgLj39Cg3wz5jKh2mnyR15RpaKg26QR9-WsyAtaoDblGhA/exec';
         let allData = [];
 
         window.onload = refreshData;
@@ -248,7 +238,7 @@
                 const json = await res.json();
                 allData = json.apresiasi || [];
                 
-                // Ambil data karyawan ke dropdown formulir (jika nanti dibuka kembali)
+                // Isi otomatis data nama karyawan ke dropdown formulir
                 const list = json.karyawan || [];
                 const dpPgr = document.getElementById('in-pengirim');
                 const dpPnr = document.getElementById('in-penerima');
@@ -259,6 +249,8 @@
                 }
 
                 processDashboard();
+                // Jika sedang di halaman pohon, langsung gambar ulang
+                if(document.getElementById('page-tree').classList.contains('active')) renderTree();
             } catch(e) { console.error("Gagal memuat data", e); }
         }
 
@@ -283,7 +275,7 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-        // Membaca format Tanggal Khusus Database (3/25/2026)
+        // Akurat membaca format tanggal database (contoh: 3/25/2026)
         function getQuarter(dateString) {
             if (!dateString) return "1";
             const parts = dateString.split('/');
@@ -326,7 +318,6 @@
                 return;
             }
 
-            // Perbaikan duplikasi deklarasi variabel groups
             const treeGroups = {};
             filtered.forEach(d => { 
                 const p = d.Penerima || d.penerima;
@@ -375,10 +366,10 @@
                 wrapper.style.left = (pos.x/500*100)+'%';
                 wrapper.style.top = (pos.y/500*100)+'%';
 
-                // PILIH MODEL BUAH BERDASARKAN TW
+                // MODEL BUAH BERDASARKAN FILTER TRIWULAN
                 let buahSvg = "";
                 if (selTW === "2") {
-                    // SVG Durian (TW 2)
+                    // Tampilan DUREN (TW 2)
                     buahSvg = `
                         <svg width="${size}" height="${size}" viewBox="0 0 100 100">
                             <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
@@ -387,7 +378,7 @@
                         </svg>
                     `;
                 } else {
-                    // SVG Apel (TW 1, 3, 4)
+                    // Tampilan APEL (TW 1, 3, 4)
                     buahSvg = `
                         <svg width="${size}" height="${size}" viewBox="0 0 100 100">
                             <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
@@ -426,7 +417,9 @@
         
             fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
                 stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
-                setTimeout(() => { location.reload(); }, 1000);
+                document.getElementById('in-pesan').value = "";
+                refreshData(); // Refresh tanpa reload halaman total
+                setTimeout(() => { stat.innerText = ""; }, 3000);
             }).catch(err => {
                 alert("Terjadi kesalahan saat mengirim.");
                 stat.innerText = "";
