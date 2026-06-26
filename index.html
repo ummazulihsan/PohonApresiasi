@@ -382,9 +382,69 @@
             
                 const placed = [];
                 Object.keys(treeGroups).forEach(nama => {
-                    // ... (sisipkan sisa logic render buah Anda di sini)
-                    // Saya tidak sertakan agar kode tidak terlalu panjang, 
-                    // tapi pastikan penempatan kurung tutup function benar.
+                    const count = treeGroups[nama].length;
+                    const size = Math.min(45 + (count * 5), 80);
+                    let pos = null;
+                    for(let attempt=0; attempt<50; attempt++) {
+                        const leaf = activeLeaves[Math.floor(Math.random()*activeLeaves.length)];
+                        const angle = Math.random()*Math.PI*2, rad = Math.random()*(leaf.r - 20);
+                        const x = leaf.x + rad*Math.cos(angle), y = leaf.y + rad*Math.sin(angle);
+                        if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < 32)) { pos = {x,y}; break; }
+                    }
+                    if(!pos) pos = {x: 250, y: 250};
+                    placed.push(pos);
+            
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'apple-wrapper';
+                    wrapper.setAttribute('data-name', nama);
+                    wrapper.style.left = (pos.x/500*100)+'%';
+                    wrapper.style.top = (pos.y/500*100)+'%';
+            
+                    let buahSvg = "";
+                    if (selTW === "2") {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
+                                <path d="M50,25 C20,25 15,45 15,65 C15,85 35,95 50,95 C65,95 85,85 85,65 C85,45 80,25 50,25 Z" fill="#85933a"/>
+                                <path d="M30,45 L25,50 L35,52 L30,58 L40,58 L35,68 L45,65 L43,75 L53,70 L55,80 L65,72 L68,80 L75,70 L78,60 L70,58 L72,48 L62,50 L60,40 L50,45 L48,35 Z" fill="#a3b14a"/>
+                            </svg>
+                        `;
+                    } else if (selTW === "3") {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,10 Q55,18 48,25" stroke="#5d4037" stroke-width="3" fill="none"/>
+                                <circle cx="50" cy="58" r="35" fill="#f9844a"/>
+                                <circle cx="50" cy="32" r="3" fill="#43aa8b"/>
+                            </svg>
+                        `;
+                    } else if (selTW === "4") {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,12 L50,25" stroke="#43281c" stroke-width="4" fill="none"/>
+                                <circle cx="50" cy="60" r="33" fill="#4c1c5c"/>
+                                <path d="M50,25 Q35,22 38,35 Q50,38 50,25 Q50,38 62,35 Q65,22 50,25" fill="#70e000"/>
+                            </svg>
+                        `;
+                    } else {
+                        buahSvg = `
+                            <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                                <path d="M50,12 Q55,20 48,26" stroke="#5d4037" stroke-width="3" fill="none"/>
+                                <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
+                            </svg>
+                        `;
+                    }
+            
+                    wrapper.innerHTML = buahSvg + `<div class="apple-name">${nama}</div>`;
+                    
+                    wrapper.onclick = () => {
+                        const modalTitle = document.getElementById('modal-title');
+                        modalTitle.style.color = selTW === "1" ? "var(--apple-red)" : selTW === "2" ? "#85933a" : selTW === "3" ? "#f9844a" : "#4c1c5c";
+                        modalTitle.innerText = `Apresiasi ${namaBuah} untuk ${nama}`;
+                        
+                        document.getElementById('modal-content').innerHTML = treeGroups[nama].map(m => `<div class="msg-bubble" style="border-left-color:${modalTitle.style.color}">"${m.Ucapan || m.ucapan}"</div>`).join('');
+                        document.getElementById('modal').style.display = 'flex';
+                    };
+                    layer.appendChild(wrapper);
                 });
             }
 
