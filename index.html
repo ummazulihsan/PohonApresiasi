@@ -237,7 +237,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwmDKyyFlwgsWMjtGVDFN_F29SGZg-0MWRCYHFrvalPCzFS3IGQKOOscQxDFflJ3MTolQ/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyIPqsSR5C7s_alYm7Idwb42C3P4HdviQHQwU-uPq4-Oc-QbXLK06MOm21quf5P8O_luw/exec';
         let allData = [];
         let daftarKaryawan = [];
 
@@ -498,20 +498,23 @@
             const pnr = document.getElementById('in-penerima').value;
             const psn = document.getElementById('in-pesan').value;
             const stat = document.getElementById('status');
+
+            // DEBUG: Cek isi data di console
+            console.log("Cek Data Global:", { daftarKaryawan, allData });
         
             // 1. Validasi Dasar
             if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
             if(pgr === pnr) return alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
         
-           /* // 2. Validasi Daftar Nama (Syntax diperbaiki di sini)
-            if (!daftarKaryawan.includes(pgr)) {
-                alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar yang muncul.");
-                return;
+           // 2. Validasi Daftar Nama (Syntax diperbaiki di sini)
+           if (!daftarKaryawan.includes(pgr)) {
+                console.warn("Validasi Gagal: Pengirim tidak ada di daftar.");
+                return alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar.");
             }
             if (!daftarKaryawan.includes(pnr)) {
-                alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar yang muncul.");
-                return;
-            }*/
+                console.warn("Validasi Gagal: Penerima tidak ada di daftar.");
+                return alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar.");
+            }
         
             // 3. Logika Triwulan
             const currentMonth = new Date().getMonth() + 1;
@@ -537,6 +540,8 @@
                 
                 return pengirimSama && penerimaSama && pesanSama && (twDataLama === currentTW);
             });
+
+            console.log("Hasil pengecekan duplikat:", sudahPernah);
         
             if(sudahPernah) {
                 return alert(`Ops! Anda sudah pernah mengirimkan apresiasi yang sama kepada ${pnr} di Triwulan ${currentTW} ini.`);
@@ -554,6 +559,7 @@
                 document.getElementById('in-pesan').value = ""; // Bersihkan pesan
                 refreshData(); 
                 setTimeout(() => { stat.innerText = ""; }, 3000);
+                console.log("Validasi lolos, mengirim data...");
             }).catch(err => {
                 alert("Terjadi kesalahan saat mengirim ke database.");
                 stat.innerText = "";
