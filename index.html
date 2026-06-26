@@ -139,6 +139,13 @@
 
         <!-- PAGE 1: DASHBOARD -->
         <div id="page-dash" class="page active">
+            <select id="dash-tw-selector" onchange="processDashboard(this.value)" style="margin-bottom: 20px; padding: 10px; border-radius: 20px; border: 2px solid var(--leaf-green); font-weight: bold;">
+                <option value="all">Semua Triwulan</option>
+                <option value="1">Triwulan 1</option>
+                <option value="2">Triwulan 2</option>
+                <option value="3">Triwulan 3</option>
+                <option value="4">Triwulan 4</option>
+            </select>
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-value" id="s-pgr">0</span>Pengirim</div>
                 <div class="stat-card"><span class="stat-value" id="s-pnr">0</span>Penerima</div>
@@ -223,6 +230,8 @@
             else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
             
             document.getElementById('tw-selector').value = currentTW;
+            // Set ke dropdown Dashboard
+            document.getElementById('dash-tw-selector').value = currentTW;
             refreshData();
         };
 
@@ -262,26 +271,38 @@
             } catch(e) { console.error("Gagal memuat data", e); }
         }
 
-        function processDashboard() {
-            if (!allData.length) return;
-            const cPnr = {}, cPgr = {}, setPgr = new Set(), setPnr = new Set();
-            allData.forEach(d => {
-                const pnr = d.Penerima || d.penerima;
-                const pgr = d.Pengirim || d.pengirim;
-                if(pnr) { setPnr.add(pnr); cPnr[pnr] = (cPnr[pnr] || 0) + 1; }
-                if(pgr) { setPgr.add(pgr); cPgr[pgr] = (cPgr[pgr] || 0) + 1; }
-            });
-            document.getElementById('s-pgr').innerText = setPgr.size;
-            document.getElementById('s-pnr').innerText = setPnr.size;
-            document.getElementById('s-total').innerText = allData.length;
-
-            const renderL = (obj, id, label) => {
-                const s = Object.entries(obj).sort((a,b) => b[1]-a[1]).slice(0,5);
-                document.getElementById(id).innerHTML = s.map(i => `<div class="leader-item"><span>${i[0]}</span><span class="leader-count">${i[1]} ${label}</span></div>`).join('');
-            };
-            renderL(cPnr, 'leaderboard-penerima', 'Apresiasi');
-            renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
-        }
+        function processDashboard(selectedTW = "all") {
+                        if (!allData.length) return;
+                    
+                        // Filter data berdasarkan TW jika dipilih
+                        let filteredData = allData;
+                        if (selectedTW !== "all") {
+                            filteredData = allData.filter(d => String(d.Triwulan || d.triwulan || "1") === String(selectedTW));
+                        }
+                    
+                        const cPnr = {}, cPgr = {}, setPgr = new Set(), setPnr = new Set();
+                        
+                        filteredData.forEach(d => {
+                            const pnr = d.Penerima || d.penerima;
+                            const pgr = d.Pengirim || d.pengirim;
+                            if(pnr) { setPnr.add(pnr); cPnr[pnr] = (cPnr[pnr] || 0) + 1; }
+                            if(pgr) { setPgr.add(pgr); cPgr[pgr] = (cPgr[pgr] || 0) + 1; }
+                        });
+                    
+                        document.getElementById('s-pgr').innerText = setPgr.size;
+                        document.getElementById('s-pnr').innerText = setPnr.size;
+                        document.getElementById('s-total').innerText = filteredData.length;
+                    
+                        const renderL = (obj, id, label) => {
+                            const s = Object.entries(obj).sort((a,b) => b[1]-a[1]).slice(0,5);
+                            document.getElementById(id).innerHTML = s.length > 0 
+                                ? s.map(i => `<div class="leader-item"><span>${i[0]}</span><span class="leader-count">${i[1]} ${label}</span></div>`).join('')
+                                : '<div style="padding:10px; color:#888;">Belum ada data di periode ini.</div>';
+                        };
+                        
+                        renderL(cPnr, 'leaderboard-penerima', 'Apresiasi');
+                        renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
+                    }
 
                  function getQuarter(dateString) {
                 if (!dateString) return "1";
