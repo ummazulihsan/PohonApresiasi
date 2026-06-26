@@ -494,38 +494,50 @@
             const psn = document.getElementById('in-pesan').value;
             const stat = document.getElementById('status');
         
+            // 1. Validasi Dasar
             if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
             if(pgr === pnr) return alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
-            // 2. Validasi: Apakah nama ada di daftar karyawan?
-            // .includes() mengecek apakah nilai ada di array daftarKaryawan
-            if (!daftarNama.includes(pgr)) return alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar yang muncul.");
-            if (!daftarNama.includes(pnr)) return alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar yang muncul.");
         
-            // 1. Dapatkan triwulan saat ini (waktu sekarang ketika tombol diklik)
+            // 2. Validasi Daftar Nama (Syntax diperbaiki di sini)
+            if (!daftarNama.includes(pgr)) {
+                alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar yang muncul.");
+                return;
+            }
+            if (!daftarNama.includes(pnr)) {
+                alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar yang muncul.");
+                return;
+            }
+        
+            // 3. Logika Triwulan
             const currentMonth = new Date().getMonth() + 1;
             let currentTW = "1";
             if (currentMonth >= 4 && currentMonth <= 6) currentTW = "2";
             else if (currentMonth >= 7 && currentMonth <= 9) currentTW = "3";
             else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
-            
-            // 2. Cek apakah sudah pernah mengirim kepada penerima yang sama DI TRIWULAN YANG SAMA
+        
+            // 4. Cek Duplikat (Pengirim, Penerima, Pesan, DAN Triwulan sama)
+            const pesanBaru = psn.toLowerCase().trim();
+        
             const sudahPernah = allData.some(d => {
                 const pengirimSama = (d.Pengirim || d.pengirim) === pgr;
                 const penerimaSama = (d.Penerima || d.penerima) === pnr;
                 
-                // Ambil tanggal dari data lama dan cek triwulannya
+                // Cek Pesan
+                const pesanLama = (d.Ucapan || d.ucapan || "").toString().toLowerCase().trim();
+                const pesanSama = pesanLama === pesanBaru;
+        
+                // Cek Triwulan
                 const tglDataLama = d.Timestamp || d.timestamp;
                 const twDataLama = getQuarter(tglDataLama); 
                 
-                // Dianggap duplikat jika pengirim sama, penerima sama, DAN triwulannya juga sama
-                return pengirimSama && penerimaSama && (twDataLama === currentTW);
+                return pengirimSama && penerimaSama && pesanSama && (twDataLama === currentTW);
             });
-            
-            if(sudahPernah) {
-                return alert(`Anda sudah pernah mengirimkan apresiasi kepada ${pnr} di Triwulan ${currentTW} ini.`);
-            }
-            
         
+            if(sudahPernah) {
+                return alert(`Ops! Anda sudah pernah mengirimkan apresiasi yang sama kepada ${pnr} di Triwulan ${currentTW} ini.`);
+            }
+        
+            // 5. Eksekusi Kirim
             stat.innerText = "⏳ Sedang menggantungkan buah apresiasi...";
             const fd = new FormData();
             fd.append('Pengirim', pgr); 
@@ -534,7 +546,7 @@
         
             fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
                 stat.innerText = "🎉 Berhasil! Buah apresiasimu telah tergantung di pohon.";
-                document.getElementById('in-pesan').value = "";
+                document.getElementById('in-pesan').value = ""; // Bersihkan pesan
                 refreshData(); 
                 setTimeout(() => { stat.innerText = ""; }, 3000);
             }).catch(err => {
