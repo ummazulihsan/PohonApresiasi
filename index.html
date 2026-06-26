@@ -283,41 +283,33 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-       function getQuarter(dateString) {
-                if (!dateString) return "1";
+      function getQuarter(dateString) {
+            if (!dateString) return "1";
+            
+            // Ubah ke string dan bersihkan spasi di ujung-ujung
+            const cleanStr = String(dateString).trim();
+            
+            // Pecah berdasarkan spasi untuk memisahkan tanggal dan jam
+            // "3/25/2026 7:49:54" -> ["3/25/2026", "7:49:54"]
+            const datePart = cleanStr.split(' ')[0];
+            
+            // Pecah bagian tanggal berdasarkan tanda miring "/"
+            // "3/25/2026" -> ["3", "25", "2026"]
+            const parts = datePart.split('/');
+            
+            if (parts.length > 0) {
+                // Ambil angka paling pertama sebagai BULAN
+                const month = parseInt(parts[0], 10); 
                 
-                // 1. Cek format ISO (contoh: 2026-06-26)
-                if (typeof dateString === 'string' && dateString.includes('-')) {
-                    const month = new Date(dateString).getMonth() + 1;
-                    if (month >= 4 && month <= 6) return "2";
-                    if (month >= 7 && month <= 9) return "3";
-                    if (month >= 10 && month <= 12) return "4";
-                    return "1";
-                }
-                
-                // 2. Cek format lokalisasi garis miring (contoh: 26/06/2026)
-                const cleanStr = String(dateString).trim();
-                const parts = cleanStr.split('/');
-                
-                if (parts.length > 1) {
-                    // Ambil bagian tengah (index 1) sebagai default bulan untuk format Indonesia
-                    let month = parseInt(parts[1], 10); 
-                    
-                    // Pencegahan kalau ternyata formatnya dari Google Sheets adalah MM/DD/YYYY
-                    if (parseInt(parts[0], 10) <= 12 && parseInt(parts[1], 10) > 12) {
-                        month = parseInt(parts[0], 10); 
-                    }
-                    
-                    if (month >= 1 && month <= 12) {
-                        if (month >= 4 && month <= 6) return "2";   
-                        if (month >= 7 && month <= 9) return "3";   
-                        if (month >= 10 && month <= 12) return "4"; 
-                        return "1";                                 
-                    }
-                }
-                
-                return "1"; // Fallback default
+                // Kelompokkan bulan ke Triwulan (return harus berupa STRING "1", "2", dst)
+                if (month >= 4 && month <= 6) return "2";   // April, Mei, Juni
+                if (month >= 7 && month <= 9) return "3";   // Juli, Agustus, September
+                if (month >= 10 && month <= 12) return "4"; // Oktober, November, Desember
+                return "1";                                 // Januari, Februari, Maret
             }
+            
+            return "1"; // Fallback aman
+        }
 
         function searchApple() {
             const q = document.getElementById('tree-search').value.toLowerCase().trim();
