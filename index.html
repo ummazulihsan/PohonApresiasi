@@ -237,7 +237,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbx_qZTHN4pmk6HpU8DwYY65VgLj39Cg3wz5jKh2mnyR15RpaKg26QR9-WsyAtaoDblGhA/exec';
         let allData = [];
 
         window.onload = refreshData;
@@ -395,11 +395,36 @@
                 wrapper.setAttribute('data-name', nama);
                 wrapper.style.left = (pos.x/500*100)+'%';
                 wrapper.style.top = (pos.y/500*100)+'%';
-                wrapper.innerHTML = `
-                    <svg width="${size}" height="${size}" viewBox="0 0 100 100">
-                        <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
-                    </svg><div class="apple-name">${nama}</div>
-                `;
+
+                
+               // --- LOGIKA PERUBAHAN BUAH BERDASARKAN TRIWULAN ---
+                let buahSvg = "";
+                
+                if (selTW === "2") {
+                    // Tampilan Buah DUREN untuk TW 2
+                     buahSvg = `
+                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                            <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
+                            <path d="M50,25 
+                                     C20,25 15,45 15,65 
+                                     C15,85 35,95 50,95 
+                                     C65,95 85,85 85,65 
+                                     C85,45 80,25 50,25 Z" fill="#85933a"/>
+                            <path d="M30,45 L25,50 L35,52 L30,58 L40,58 L35,68 L45,65 L43,75 L53,70 L55,80 L65,72 L68,80 L75,70 L78,60 L70,58 L72,48 L62,50 L60,40 L50,45 L48,35 Z" fill="#a3b14a"/>
+                            <path d="M40,40 L35,45 L42,47 M55,45 L60,50 L52,53 M45,75 L50,83 L55,75" stroke="#6b7728" stroke-width="2" fill="none"/>
+                        </svg>
+                    `;
+                } else {
+                    // Tampilan APEL untuk TW 1, 3, dan 4
+                    buahSvg = `
+                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                            <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
+                        </svg>
+                    `;
+                }
+            
+                wrapper.innerHTML = buahSvg + `<div class="apple-name">${nama}</div>`;
+                
                 wrapper.onclick = () => {
                     document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
                     document.getElementById('modal-content').innerHTML = groups[nama].map(m => `<div class="msg-bubble">"${m.Ucapan || m.ucapan}"</div>`).join('');
