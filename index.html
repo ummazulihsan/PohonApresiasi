@@ -499,11 +499,11 @@
             if(pgr === pnr) return alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
         
             // 2. Validasi Daftar Nama (Syntax diperbaiki di sini)
-            if (!daftarNama.includes(pgr)) {
+            if (!daftarKaryawan.includes(pgr)) {
                 alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar yang muncul.");
                 return;
             }
-            if (!daftarNama.includes(pnr)) {
+            if (!daftarKaryawan.includes(pnr)) {
                 alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar yang muncul.");
                 return;
             }
