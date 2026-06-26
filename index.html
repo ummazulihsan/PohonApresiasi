@@ -43,6 +43,22 @@
             top: 15px; 
             color: var(--leaf-green); 
         }
+
+        .autocomplete-input {
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #ddd; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            outline: none; 
+            background: white; 
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        
+        .autocomplete-input:focus {
+            border-color: var(--leaf-green);
+        }
         
         /* Efek Apel / Durian */
         .apple-wrapper { transition: all 0.4s ease; z-index: 10; }
@@ -162,13 +178,16 @@
                 
                 <div>
                     <div class="input-group">
-                        <label>Namamu (Pengirim)</label>
-                        <select id="in-pengirim"><option value="">Memuat daftar nama...</option></select>
+                    <label>Namamu (Pengirim)</label>
+                    <input list="list-karyawan" id="in-pengirim" placeholder="Ketik namamu..." class="autocomplete-input">
                     </div>
                     <div class="input-group">
-                        <label>Untuk Siapa? (Penerima)</label>
-                        <select id="in-penerima"><option value="">Memuat daftar nama...</option></select>
+                    <label>Untuk Siapa? (Penerima)</label>
+                    <input list="list-karyawan" id="in-penerima" placeholder="Cari nama penerima..." class="autocomplete-input">
                     </div>
+                
+                    <datalist id="list-karyawan">
+                    </datalist>
                     <div class="input-group">
                         <label>Apresiasi Tulusmu</label>
                         <textarea id="in-pesan" rows="5" placeholder="Tuliskan hal baik atau ucapan terima kasihmu di sini..."></textarea>
@@ -185,8 +204,8 @@
                 <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
                     <option value="1">Pohon TW 1 (Apel)</option>
                     <option value="2">Pohon TW 2 (Durian)</option>
-                    <option value="3">Pohon TW 3 (Jeruk)</option>
-                    <option value="4">Pohon TW 4 (Manggis)</option>
+                    <option value="3">Pohon TW 3 </option>
+                    <option value="4">Pohon TW 4 </option>
                 </select>
                 <div class="search-container-inner">
                     <input type="text" id="tree-search" class="search-input" placeholder="Cari nama..." oninput="searchApple()">
@@ -258,14 +277,14 @@
                 allData = json.apresiasi || [];
                 
                 const list = json.karyawan || [];
-                const dpPgr = document.getElementById('in-pengirim');
-                const dpPnr = document.getElementById('in-penerima');
-                if (list.length > 0 && dpPgr && dpPnr) {
-                    const htmlOptions = '<option value="">-- Pilih Nama --</option>' + list.map(n => `<option value="${n}">${n}</option>`).join('');
-                    dpPgr.innerHTML = htmlOptions;
-                    dpPnr.innerHTML = htmlOptions;
+                const datalist = document.getElementById('list-karyawan');
+                
+                if (list.length > 0 && datalist) {
+                    // Kita buat string options sekali saja untuk efisiensi
+                    const htmlOptions = list.map(n => `<option value="${n}">`).join('');
+                    datalist.innerHTML = htmlOptions;
                 }
-
+        
                 processDashboard();
                 if(document.getElementById('page-tree').classList.contains('active')) renderTree();
             } catch(e) { console.error("Gagal memuat data", e); }
