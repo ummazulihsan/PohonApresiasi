@@ -185,7 +185,8 @@
                     <label>Untuk Siapa? (Penerima)</label>
                     <input list="list-karyawan" id="in-penerima" placeholder="Cari nama penerima..." class="autocomplete-input">
                     </div>
-                
+                    <datalist id="list-karyawan">
+                    </datalist>
         
                     <div class="input-group">
                         <label>Apresiasi Tulusmu</label>
@@ -236,7 +237,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycby5axFRpfindkn6ZYTlVZoLDXEgtcELSgRac97dbaDLlj9eu55QkElrUaqPKx6t9JIJJw/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwmDKyyFlwgsWMjtGVDFN_F29SGZg-0MWRCYHFrvalPCzFS3IGQKOOscQxDFflJ3MTolQ/exec';
         let allData = [];
 
         window.onload = () => {
