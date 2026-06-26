@@ -283,33 +283,34 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-      function getQuarter(dateString) {
-            if (!dateString) return "1";
+                 function getQuarter(dateString) {
+                if (!dateString) return "1";
             
-            // Ubah ke string dan bersihkan spasi di ujung-ujung
-            const cleanStr = String(dateString).trim();
+                // Ubah string menjadi objek Date agar JS yang menentukan bulan secara otomatis
+                // Ini lebih aman daripada memotong string secara manual
+                const date = new Date(dateString);
             
-            // Pecah berdasarkan spasi untuk memisahkan tanggal dan jam
-            // "3/25/2026 7:49:54" -> ["3/25/2026", "7:49:54"]
-            const datePart = cleanStr.split(' ')[0];
+                // Cek jika format tanggal tidak valid
+                if (isNaN(date.getTime())) {
+                    // Jika gagal, coba cara manual (asumsi MM/DD/YYYY atau D/M/YYYY)
+                    const parts = String(dateString).split(/[\/ -]/); // Split dengan / , spasi, atau -
+                    // Jika elemen pertama > 12, kemungkinan itu DD/MM/YYYY, jadi bulan ada di index 1
+                    const month = parseInt(parts[0], 10) > 12 ? parseInt(parts[1], 10) : parseInt(parts[0], 10);
+                    
+                    if (month >= 4 && month <= 6) return "2";
+                    if (month >= 7 && month <= 9) return "3";
+                    if (month >= 10 && month <= 12) return "4";
+                    return "1";
+                }
             
-            // Pecah bagian tanggal berdasarkan tanda miring "/"
-            // "3/25/2026" -> ["3", "25", "2026"]
-            const parts = datePart.split('/');
+                // Jika valid, ambil bulan (0-11, jadi +1)
+                const month = date.getMonth() + 1;
             
-            if (parts.length > 0) {
-                // Ambil angka paling pertama sebagai BULAN
-                const month = parseInt(parts[0], 10); 
-                
-                // Kelompokkan bulan ke Triwulan (return harus berupa STRING "1", "2", dst)
-                if (month >= 4 && month <= 6) return "2";   // April, Mei, Juni
-                if (month >= 7 && month <= 9) return "3";   // Juli, Agustus, September
-                if (month >= 10 && month <= 12) return "4"; // Oktober, November, Desember
-                return "1";                                 // Januari, Februari, Maret
+                if (month >= 4 && month <= 6) return "2";
+                if (month >= 7 && month <= 9) return "3";
+                if (month >= 10 && month <= 12) return "4";
+                return "1";
             }
-            
-            return "1"; // Fallback aman
-        }
 
         function searchApple() {
             const q = document.getElementById('tree-search').value.toLowerCase().trim();
@@ -331,7 +332,12 @@
                 document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW} (${namaBuah})`;
                 
                 layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
-            
+
+                // Tambahkan ini untuk melihat di console browser (F12)
+                    console.log("Mencari data untuk TW:", selTW);
+                    console.log("Total data tersedia:", allData.length);
+                    console.log("Hasil filter:", filtered);
+           
                 const filtered = allData.filter(d => {
                     const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
                     return getQuarter(tgl) === selTW;
