@@ -148,7 +148,7 @@
             <div class="leaderboard"><h3>🌟 Top 5 Pengirim</h3><div id="leaderboard-pengirim"></div></div>
         </div>
 
-        <!-- PAGE 2: INPUT (FORMULIR TERBUKA BERFUNGSI) -->
+        <!-- PAGE 2: INPUT FORM -->
         <div id="page-input" class="page">
             <div class="card">
                 <h2 style="color: var(--leaf-green); text-align: center; margin-top: 0; margin-bottom: 25px;"><i class="fas fa-heart"></i> Kirim Apresiasi</h2>
@@ -166,20 +166,20 @@
                         <label>Apresiasi Tulusmu</label>
                         <textarea id="in-pesan" rows="5" placeholder="Tuliskan hal baik atau ucapan terima kasihmu di sini..."></textarea>
                     </div>
-                    <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
+                    <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon!</button>
                     <div id="status" style="margin-top:15px; text-align:center; font-weight:bold; color: var(--leaf-green);"></div>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 3: POHON -->
+        <!-- PAGE 3: POHON (ADAPTIF TRIWULAN) -->
         <div id="page-tree" class="page">
             <div class="search-wrapper">
                 <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
                     <option value="1">Pohon TW 1 (Apel)</option>
                     <option value="2">Pohon TW 2 (Durian)</option>
-                    <option value="3">Pohon TW 3</option>
-                    <option value="4">Pohon TW 4</option>
+                    <option value="3">Pohon TW 3 (Jeruk)</option>
+                    <option value="4">Pohon TW 4 (Manggis)</option>
                 </select>
                 <div class="search-container-inner">
                     <input type="text" id="tree-search" class="search-input" placeholder="Cari nama..." oninput="searchApple()">
@@ -205,7 +205,7 @@
 
     <div id="modal" onclick="this.style.display='none'">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h2 id="modal-title" style="color:var(--apple-red); margin-top:0;"></h2>
+            <h2 id="modal-title" style="color:var(--leaf-green); margin-top:0;"></h2>
             <div id="modal-content"></div>
         </div>
     </div>
@@ -214,7 +214,17 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycbx_qZTHN4pmk6HpU8DwYY65VgLj39Cg3wz5jKh2mnyR15RpaKg26QR9-WsyAtaoDblGhA/exec';
         let allData = [];
 
-        window.onload = refreshData;
+        window.onload = () => {
+            // Pasang default select TW berdasarkan bulan saat ini secara real-time
+            const currentMonth = new Date().getMonth() + 1; // 1-12
+            let currentTW = "1";
+            if (currentMonth >= 4 && currentMonth <= 6) currentTW = "2";
+            else if (currentMonth >= 7 && currentMonth <= 9) currentTW = "3";
+            else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
+            
+            document.getElementById('tw-selector').value = currentTW;
+            refreshData();
+        };
 
         function showTab(pageId, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -238,7 +248,6 @@
                 const json = await res.json();
                 allData = json.apresiasi || [];
                 
-                // Isi otomatis data nama karyawan ke dropdown formulir
                 const list = json.karyawan || [];
                 const dpPgr = document.getElementById('in-pengirim');
                 const dpPnr = document.getElementById('in-penerima');
@@ -249,7 +258,6 @@
                 }
 
                 processDashboard();
-                // Jika sedang di halaman pohon, langsung gambar ulang
                 if(document.getElementById('page-tree').classList.contains('active')) renderTree();
             } catch(e) { console.error("Gagal memuat data", e); }
         }
@@ -275,13 +283,23 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-        // Akurat membaca format tanggal database (contoh: 3/25/2026)
+        // Membaca Triwulan dari data waktu database secara akurat
         function getQuarter(dateString) {
             if (!dateString) return "1";
+            
+            // Atasi jika data sudah berupa format ISO String bawaan javascript objek
+            if(dateString.includes('-')) {
+                const month = new Date(dateString).getMonth() + 1;
+                if (month >= 4 && month <= 6) return "2";
+                if (month >= 7 && month <= 9) return "3";
+                if (month >= 10 && month <= 12) return "4";
+                return "1";
+            }
+            
+            // Format standard Sheet biasa (MM/DD/YYYY atau DD/MM/YYYY)
             const parts = dateString.split('/');
             if (parts.length > 0) {
                 const month = parseInt(parts[0]);
-                if (month >= 1 && month <= 3) return "1";
                 if (month >= 4 && month <= 6) return "2";
                 if (month >= 7 && month <= 9) return "3";
                 if (month >= 10 && month <= 12) return "4";
@@ -305,16 +323,20 @@
             const leafGroup = document.getElementById('tree-leaves');
             const selTW = document.getElementById('tw-selector').value;
             
-            document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW}`;
+            // Mengubah nama buah di judul dinamis sesuai Triwulan
+            const namaBuah = selTW === "1" ? "Apel" : selTW === "2" ? "Durian" : selTW === "3" ? "Jeruk" : "Manggis";
+            document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW} (${namaBuah})`;
+            
             layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
 
+            // Filter data murni per Triwulan terpilih
             const filtered = allData.filter(d => {
                 const tgl = d.Timestamp || d.timestamp;
                 return getQuarter(tgl) === selTW;
             });
 
             if (!filtered.length) {
-                layer.innerHTML = `<div style="color: #666; margin-top: 50px; text-align:center; width:100%;">Belum ada buah di TW ${selTW} ini.</div>`;
+                layer.innerHTML = `<div style="color: #444; margin-top: 60px; font-weight: bold; text-align:center; width:100%;">Belum ada buah ${namaBuah} yang tumbuh di TW ${selTW}. Yuk kirim apresiasi!</div>`;
                 return;
             }
 
@@ -355,7 +377,7 @@
                     const leaf = activeLeaves[Math.floor(Math.random()*activeLeaves.length)];
                     const angle = Math.random()*Math.PI*2, rad = Math.random()*(leaf.r - 20);
                     const x = leaf.x + rad*Math.cos(angle), y = leaf.y + rad*Math.sin(angle);
-                    if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < 30)) { pos = {x,y}; break; }
+                    if(!placed.some(p => Math.hypot(p.x-x, p.y-y) < 32)) { pos = {x,y}; break; }
                 }
                 if(!pos) pos = {x: 250, y: 250};
                 placed.push(pos);
@@ -366,10 +388,10 @@
                 wrapper.style.left = (pos.x/500*100)+'%';
                 wrapper.style.top = (pos.y/500*100)+'%';
 
-                // MODEL BUAH BERDASARKAN FILTER TRIWULAN
+                // DESAIN MODEL SVGBUAH BERDASARKAN TRIWULAN TERPILIH
                 let buahSvg = "";
                 if (selTW === "2") {
-                    // Tampilan DUREN (TW 2)
+                    // TW 2: DURIAN
                     buahSvg = `
                         <svg width="${size}" height="${size}" viewBox="0 0 100 100">
                             <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
@@ -377,10 +399,29 @@
                             <path d="M30,45 L25,50 L35,52 L30,58 L40,58 L35,68 L45,65 L43,75 L53,70 L55,80 L65,72 L68,80 L75,70 L78,60 L70,58 L72,48 L62,50 L60,40 L50,45 L48,35 Z" fill="#a3b14a"/>
                         </svg>
                     `;
-                } else {
-                    // Tampilan APEL (TW 1, 3, 4)
+                } else if (selTW === "3") {
+                    // TW 3: JERUK (ORANGE)
                     buahSvg = `
                         <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                            <path d="M50,10 Q55,18 48,25" stroke="#5d4037" stroke-width="3" fill="none"/>
+                            <circle cx="50" cy="58" r="35" fill="#f9844a"/>
+                            <circle cx="50" cy="32" r="3" fill="#43aa8b"/>
+                        </svg>
+                    `;
+                } else if (selTW === "4") {
+                    // TW 4: MANGGIS (PURPLE)
+                    buahSvg = `
+                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                            <path d="M50,12 L50,25" stroke="#43281c" stroke-width="4" fill="none"/>
+                            <circle cx="50" cy="60" r="33" fill="#4c1c5c"/>
+                            <path d="M50,25 Q35,22 38,35 Q50,38 50,25 Q50,38 62,35 Q65,22 50,25" fill="#70e000"/>
+                        </svg>
+                    `;
+                } else {
+                    // TW 1: APEL ASLI (RED)
+                    buahSvg = `
+                        <svg width="${size}" height="${size}" viewBox="0 0 100 100">
+                            <path d="M50,12 Q55,20 48,26" stroke="#5d4037" stroke-width="3" fill="none"/>
                             <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
                         </svg>
                     `;
@@ -389,8 +430,12 @@
                 wrapper.innerHTML = buahSvg + `<div class="apple-name">${nama}</div>`;
                 
                 wrapper.onclick = () => {
-                    document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
-                    document.getElementById('modal-content').innerHTML = treeGroups[nama].map(m => `<div class="msg-bubble">"${m.Ucapan || m.ucapan}"</div>`).join('');
+                    // Menyesuaikan warna header pop up sesuai tema triwulan
+                    const modalTitle = document.getElementById('modal-title');
+                    modalTitle.style.color = selTW === "1" ? "var(--apple-red)" : selTW === "2" ? "#85933a" : selTW === "3" ? "#f9844a" : "#4c1c5c";
+                    modalTitle.innerText = `Apresiasi ${namaBuah} untuk ${nama}`;
+                    
+                    document.getElementById('modal-content').innerHTML = treeGroups[nama].map(m => `<div class="msg-bubble" style="border-left-color:${modalTitle.style.color}">"${m.Ucapan || m.ucapan}"</div>`).join('');
                     document.getElementById('modal').style.display = 'flex';
                 };
                 layer.appendChild(wrapper);
@@ -406,22 +451,44 @@
             if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
             if(pgr === pnr) return alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
         
-            const sudahPernah = allData.some(d => (d.Pengirim || d.pengirim) === pgr && (d.Penerima || d.penerima) === pnr);
-            if(sudahPernah) return alert(`Anda sudah pernah mengirimkan apresiasi kepada ${pnr}.`);
+            // 1. Dapatkan triwulan saat ini (waktu sekarang ketika tombol diklik)
+            const currentMonth = new Date().getMonth() + 1;
+            let currentTW = "1";
+            if (currentMonth >= 4 && currentMonth <= 6) currentTW = "2";
+            else if (currentMonth >= 7 && currentMonth <= 9) currentTW = "3";
+            else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
+            
+            // 2. Cek apakah sudah pernah mengirim kepada penerima yang sama DI TRIWULAN YANG SAMA
+            const sudahPernah = allData.some(d => {
+                const pengirimSama = (d.Pengirim || d.pengirim) === pgr;
+                const penerimaSama = (d.Penerima || d.penerima) === pnr;
+                
+                // Ambil tanggal dari data lama dan cek triwulannya
+                const tglDataLama = d.Timestamp || d.timestamp;
+                const twDataLama = getQuarter(tglDataLama); 
+                
+                // Dianggap duplikat jika pengirim sama, penerima sama, DAN triwulannya juga sama
+                return pengirimSama && penerimaSama && (twDataLama === currentTW);
+            });
+            
+            if(sudahPernah) {
+                return alert(`Anda sudah pernah mengirimkan apresiasi kepada ${pnr} di Triwulan ${currentTW} ini.`);
+            }
+            
         
-            stat.innerText = "⏳ Sedang menggantungkan buah...";
+            stat.innerText = "⏳ Sedang menggantungkan buah apresiasi...";
             const fd = new FormData();
             fd.append('Pengirim', pgr); 
             fd.append('Penerima', pnr); 
             fd.append('Ucapan', psn);
         
             fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
-                stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
+                stat.innerText = "🎉 Berhasil! Buah apresiasimu telah tergantung di pohon.";
                 document.getElementById('in-pesan').value = "";
-                refreshData(); // Refresh tanpa reload halaman total
+                refreshData(); 
                 setTimeout(() => { stat.innerText = ""; }, 3000);
             }).catch(err => {
-                alert("Terjadi kesalahan saat mengirim.");
+                alert("Terjadi kesalahan saat mengirim ke database.");
                 stat.innerText = "";
             });
         }
