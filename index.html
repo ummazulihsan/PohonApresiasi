@@ -239,6 +239,7 @@
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwmDKyyFlwgsWMjtGVDFN_F29SGZg-0MWRCYHFrvalPCzFS3IGQKOOscQxDFflJ3MTolQ/exec';
         let allData = [];
+        let daftarKaryawan = [];
 
         window.onload = () => {
             // Pasang default select TW berdasarkan bulan saat ini secara real-time
@@ -275,6 +276,7 @@
                 const res = await fetch(API_URL);
                 const json = await res.json();
                 allData = json.apresiasi || [];
+                daftarKaryawan = json.karyawan || [];
                 
                 const list = json.karyawan || [];
                 const datalist = document.getElementById('list-karyawan');
@@ -284,6 +286,9 @@
                     const htmlOptions = list.map(n => `<option value="${n}">`).join('');
                     datalist.innerHTML = htmlOptions;
                 }
+                if (daftarKaryawan.length > 0 && datalist) {
+                datalist.innerHTML = daftarKaryawan.map(n => `<option value="${n}">`).join('');
+                    }
         
                 processDashboard();
                 if(document.getElementById('page-tree').classList.contains('active')) renderTree();
