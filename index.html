@@ -95,13 +95,20 @@
         .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
         .leader-count { background: #f0fdf4; color: var(--leaf-green); padding: 5px 12px; border-radius: 15px; font-weight: bold; }
 
-         /* --- TAB 2: INPUT FORM (LOCK MODE) --- */
+         /* --- TAB 2: INPUT FORM --- */
         .card { background: var(--white-glass); padding: 40px; border-radius: 25px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(10px); box-sizing: border-box; }
         .input-group { margin-bottom: 20px; position: relative; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--leaf-green); }
         .card select, .card textarea { width: 100%; padding: 14px 14px 14px 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; background: white; box-sizing: border-box; }
         .btn { background: var(--leaf-green); color: white; border: none; padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
         
+        /* AREA YANG DI-LOCK SAAT TUTUP */
+        .locked-session {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+
         /* TREE */
         #tree-container { position: relative; width: 100%; max-width: 900px; height: 500px; margin-top: 20px; }
         #apples-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
@@ -141,13 +148,12 @@
                 <div class="stat-card"><span class="stat-value" id="s-pnr">0</span>Penerima</div>
                 <div class="stat-card"><span class="stat-value" id="s-total">0</span>Ucapan</div>
             </div>
-            <div class="leaderboard"><h3>🏆 Top 5 Penerima Apresiasi</h3><div id="leaderboard-penerima"></div></div>
-            <div class="leaderboard"><h3>🌟 Top 5 Pengirim Apresiasi</h3><div id="leaderboard-pengirim"></div></div>
+            <div class="leaderboard"><h3>🏆 Top 5 Penerima</h3><div id="leaderboard-penerima"></div></div>
+            <div class="leaderboard"><h3>🌟 Top 5 Pengirim</h3><div id="leaderboard-pengirim"></div></div>
         </div>
 
-        <!-- ini klo pengisian dinonaktifkan
         <div id="page-input" class="page">
-            <div class="card" style="position: relative; overflow: hidden;">
+            <div class="card">
                 <div style="text-align: center; padding: 20px; background: #fff5f5; border: 2px dashed var(--apple-red); border-radius: 15px; margin-bottom: 20px;">
                     <i class="fas fa-clock" style="font-size: 3rem; color: var(--apple-red); margin-bottom: 15px;"></i>
                     <h2 style="color: var(--apple-red); margin: 0 0 10px 0;">Sesi Ditutup</h2>
@@ -157,51 +163,31 @@
                     </p>
                     <p style="font-weight: bold; color: var(--leaf-green);">Sampai jumpa di sesi berikutnya! 🍎</p>
                 </div>
-                <div style="opacity: 0.3; pointer-events: none; filter: grayscale(1);">
+                
+                <div class="locked-session">
                     <div class="input-group">
                         <label>Namamu (Pengirim)</label>
-                        <select disabled><option>Sesi Nonaktif</option></select>
+                        <select id="in-pengirim" disabled><option>Sesi Nonaktif</option></select>
                     </div>
                     <div class="input-group">
-                        <label>Untuk Siapa?</label>
-                        <select disabled><option>Sesi Nonaktif</option></select>
+                        <label>Untuk Siapa? (Penerima)</label>
+                        <select id="in-penerima" disabled><option>Sesi Nonaktif</option></select>
                     </div>
-                    <button class="btn" style="background: #ccc;">Input Ditutup</button>
+                    <div class="input-group">
+                        <label>Apresiasi Tulusmu</label>
+                        <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik..." disabled></textarea>
+                    </div>
+                    <button class="btn" style="background: #ccc;" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
+                    <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
                 </div>
             </div>
         </div>
-        -->
-
-
-     
-        <div id="page-input" class="page">
-            <div class="card">
-                <h2 style="text-align:center; color:var(--leaf-green); margin-top:0;">Kirim Pesan Kebaikan</h2>
-                <div class="input-group">
-                    <label>Namamu (Pengirim)</label>
-                    <i class="fa fa-user"></i>
-                    <select id="in-pengirim"><option value="">Memuat nama...</option></select>
-                </div>
-                <div class="input-group">
-                    <label>Untuk Siapa? (Penerima)</label>
-                    <i class="fa fa-heart"></i>
-                    <select id="in-penerima"><option value="">Memuat nama...</option></select>
-                </div>
-                <div class="input-group">
-                    <label>Apresiasi Tulusmu</label>
-                    <textarea id="in-pesan" rows="5" placeholder="Sebutkan hal baik yang dilakukannya..."></textarea>
-                </div>
-                <button class="btn" onclick="submitApresiasi()">Gantungkan di Pohon! 🍎</button>
-                <div id="status" style="margin-top:15px; text-align:center; font-weight:bold;"></div>
-            </div>
-        </div>
-    
 
         <div id="page-tree" class="page">
             <div class="search-wrapper">
                 <select id="tw-selector" onchange="renderTree()" style="padding: 10px; border-radius: 25px; border: 2px solid var(--leaf-green); outline: none; font-weight: bold; cursor: pointer;">
-                    <option value="1">Pohon TW 1</option>
-                    <option value="2">Pohon TW 2</option>
+                    <option value="1">Pohon TW 1 (Apel)</option>
+                    <option value="2">Pohon TW 2 (Durian)</option>
                     <option value="3">Pohon TW 3</option>
                     <option value="4">Pohon TW 4</option>
                 </select>
@@ -223,10 +209,8 @@
     </div>
 
     <footer>
-        <p style="margin: 0; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
-        <div style="width: 40px; height: 2px; background: var(--apple-red); margin: 10px auto;"></div>
-        <p style="margin: 0; font-size: 0.85rem; font-weight: 600;">Developed with ❤️ Ummazulihsan</p>
-        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Provinsi Kep. Bangka Belitung © 2026</p>
+        <p style="margin: 0; font-weight: 900; letter-spacing: 2px;">MENANAM KEBAIKAN BERSAMA</p>
+        <p style="margin: 5px 0 0; font-size: 0.7rem; opacity: 0.6;">Tim CAN BPS Kep. Bangka Belitung © 2026</p>
     </footer>
 
     <div id="modal" onclick="this.style.display='none'">
@@ -237,7 +221,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbx_qZTHN4pmk6HpU8DwYY65VgLj39Cg3wz5jKh2mnyR15RpaKg26QR9-WsyAtaoDblGhA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxyF3giXL8Sj3tcKCJXKsPUUJw4nENyig3t8JztbB_1gK7z6Nce7w_hFI9LM1zCdMC3yw/exec';
         let allData = [];
 
         window.onload = refreshData;
@@ -258,32 +242,22 @@
             else { bgMusic.pause(); musicIcon.classList.replace('fa-volume-up', 'fa-volume-mute'); }
         }
 
-        document.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
-            }
-        }, { once: true });
-
         async function refreshData() {
             try {
                 const res = await fetch(API_URL);
                 const json = await res.json();
-               // 1. Simpan data apresiasi
                 allData = json.apresiasi || [];
-        
-                // 2. AMBIL DATA KARYAWAN & MASUKKAN KE DROPDOWN (Perbaikan di sini)
+                
+                // Ambil data karyawan ke dropdown formulir (jika nanti dibuka kembali)
                 const list = json.karyawan || [];
-                const dropdownPengirim = document.getElementById('in-pengirim');
-                const dropdownPenerima = document.getElementById('in-penerima');
-                
-                const htmlOptions = '<option value="">-- Pilih Nama --</option>' + 
-                                    list.map(n => `<option value="${n}">${n}</option>`).join('');
-                
-                if (dropdownPengirim) dropdownPengirim.innerHTML = htmlOptions;
-                if (dropdownPenerima) dropdownPenerima.innerHTML = htmlOptions;
-        
-                // 3. Proses dashboard & pohon
+                const dpPgr = document.getElementById('in-pengirim');
+                const dpPnr = document.getElementById('in-penerima');
+                if (list.length > 0 && dpPgr && dpPnr) {
+                    const htmlOptions = '<option value="">-- Pilih Nama --</option>' + list.map(n => `<option value="${n}">${n}</option>`).join('');
+                    dpPgr.innerHTML = htmlOptions;
+                    dpPnr.innerHTML = htmlOptions;
+                }
+
                 processDashboard();
             } catch(e) { console.error("Gagal memuat data", e); }
         }
@@ -309,22 +283,17 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-       function getQuarter(dateString) {
+        // Membaca format Tanggal Khusus Database (3/25/2026)
+        function getQuarter(dateString) {
             if (!dateString) return "1";
-        
-            // Teknik Potong Teks (Sangat Akurat untuk format 3/25/2026)
-            // Kita ambil angka pertama sebelum tanda garis miring (/)
             const parts = dateString.split('/');
             if (parts.length > 0) {
-                const month = parseInt(parts[0]); // Mengambil angka '3' dari '3/25/2026'
-        
+                const month = parseInt(parts[0]);
                 if (month >= 1 && month <= 3) return "1";
                 if (month >= 4 && month <= 6) return "2";
                 if (month >= 7 && month <= 9) return "3";
                 if (month >= 10 && month <= 12) return "4";
             }
-        
-            // Fallback jika cara di atas gagal
             return "1";
         }
 
@@ -347,26 +316,22 @@
             document.getElementById('current-tw-title').innerText = `Pohon Triwulan ${selTW}`;
             layer.innerHTML = ""; branchGroup.innerHTML = ""; leafGroup.innerHTML = "";
 
-           // Filter yang lebih aman (cek Timestamp atau timestamp)
-                const filtered = allData.filter(d => {
-                    //const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
-                    const tgl = d.Timestamp || d.timestamp;
-                    return getQuarter(tgl) === selTW;
-                });
-            
-                // Debugging: Munculkan di Console untuk cek apakah data terfilter
-                console.log(`Data untuk TW ${selTW}:`, filtered);
-            
-                if (!filtered.length) {
-                    layer.innerHTML = `<div style="color: #666; margin-top: 50px; text-align:center; width:100%;">Belum ada buah di TW ${selTW} ini.</div>`;
-                    return;
-                }
+            const filtered = allData.filter(d => {
+                const tgl = d.Timestamp || d.timestamp;
+                return getQuarter(tgl) === selTW;
+            });
 
-            const groups = {};
+            if (!filtered.length) {
+                layer.innerHTML = `<div style="color: #666; margin-top: 50px; text-align:center; width:100%;">Belum ada buah di TW ${selTW} ini.</div>`;
+                return;
+            }
+
+            // Perbaikan duplikasi deklarasi variabel groups
+            const treeGroups = {};
             filtered.forEach(d => { 
                 const p = d.Penerima || d.penerima;
-                if(!groups[p]) groups[p] = []; 
-                groups[p].push(d); 
+                if(!treeGroups[p]) treeGroups[p] = []; 
+                treeGroups[p].push(d); 
             });
 
             const levels = [
@@ -391,8 +356,8 @@
             }
 
             const placed = [];
-            Object.keys(groups).forEach(nama => {
-                const count = groups[nama].length;
+            Object.keys(treeGroups).forEach(nama => {
+                const count = treeGroups[nama].length;
                 const size = Math.min(45 + (count * 5), 80);
                 let pos = null;
                 for(let attempt=0; attempt<50; attempt++) {
@@ -410,41 +375,61 @@
                 wrapper.style.left = (pos.x/500*100)+'%';
                 wrapper.style.top = (pos.y/500*100)+'%';
 
-                
-               // --- LOGIKA PERUBAHAN BUAH BERDASARKAN TRIWULAN ---
+                // PILIH MODEL BUAH BERDASARKAN TW
                 let buahSvg = "";
-                
                 if (selTW === "2") {
-                    // Tampilan Buah DUREN untuk TW 2
-                     buahSvg = `
+                    // SVG Durian (TW 2)
+                    buahSvg = `
                         <svg width="${size}" height="${size}" viewBox="0 0 100 100">
                             <path d="M50,10 Q45,20 48,30" stroke="#5d4037" stroke-width="4" fill="none"/>
-                            <path d="M50,25 
-                                     C20,25 15,45 15,65 
-                                     C15,85 35,95 50,95 
-                                     C65,95 85,85 85,65 
-                                     C85,45 80,25 50,25 Z" fill="#85933a"/>
+                            <path d="M50,25 C20,25 15,45 15,65 C15,85 35,95 50,95 C65,95 85,85 85,65 C85,45 80,25 50,25 Z" fill="#85933a"/>
                             <path d="M30,45 L25,50 L35,52 L30,58 L40,58 L35,68 L45,65 L43,75 L53,70 L55,80 L65,72 L68,80 L75,70 L78,60 L70,58 L72,48 L62,50 L60,40 L50,45 L48,35 Z" fill="#a3b14a"/>
-                            <path d="M40,40 L35,45 L42,47 M55,45 L60,50 L52,53 M45,75 L50,83 L55,75" stroke="#6b7728" stroke-width="2" fill="none"/>
                         </svg>
                     `;
                 } else {
-                    // Tampilan APEL untuk TW 1, 3, dan 4
+                    // SVG Apel (TW 1, 3, 4)
                     buahSvg = `
                         <svg width="${size}" height="${size}" viewBox="0 0 100 100">
                             <path d="M50,90 C15,90 5,70 5,45 C5,20 25,10 50,15 C75,10 95,20 95,45 C95,70 85,90 50,90 Z" fill="var(--apple-red)"/>
                         </svg>
                     `;
                 }
-            
+
                 wrapper.innerHTML = buahSvg + `<div class="apple-name">${nama}</div>`;
                 
                 wrapper.onclick = () => {
                     document.getElementById('modal-title').innerText = "Kebaikan untuk " + nama;
-                    document.getElementById('modal-content').innerHTML = groups[nama].map(m => `<div class="msg-bubble">"${m.Ucapan || m.ucapan}"</div>`).join('');
+                    document.getElementById('modal-content').innerHTML = treeGroups[nama].map(m => `<div class="msg-bubble">"${m.Ucapan || m.ucapan}"</div>`).join('');
                     document.getElementById('modal').style.display = 'flex';
                 };
                 layer.appendChild(wrapper);
+            });
+        }
+
+        function submitApresiasi() {
+            const pgr = document.getElementById('in-pengirim').value;
+            const pnr = document.getElementById('in-penerima').value;
+            const psn = document.getElementById('in-pesan').value;
+            const stat = document.getElementById('status');
+        
+            if(!pgr || !pnr || !psn) return alert("Mohon lengkapi semua data!");
+            if(pgr === pnr) return alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
+        
+            const sudahPernah = allData.some(d => (d.Pengirim || d.pengirim) === pgr && (d.Penerima || d.penerima) === pnr);
+            if(sudahPernah) return alert(`Anda sudah pernah mengirimkan apresiasi kepada ${pnr}.`);
+        
+            stat.innerText = "⏳ Sedang menggantungkan buah...";
+            const fd = new FormData();
+            fd.append('Pengirim', pgr); 
+            fd.append('Penerima', pnr); 
+            fd.append('Ucapan', psn);
+        
+            fetch(API_URL, { method: 'POST', body: fd, mode: 'no-cors' }).then(() => {
+                stat.innerText = "🍎 Berhasil! Buahmu telah tergantung.";
+                setTimeout(() => { location.reload(); }, 1000);
+            }).catch(err => {
+                alert("Terjadi kesalahan saat mengirim.");
+                stat.innerText = "";
             });
         }
     </script>
