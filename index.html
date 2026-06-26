@@ -211,7 +211,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbx_qZTHN4pmk6HpU8DwYY65VgLj39Cg3wz5jKh2mnyR15RpaKg26QR9-WsyAtaoDblGhA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwclw3HWGWjC-YqBWII4ZVMfv8-sk4wDR7LvmWdbSX4GJdc9Y-3u7-hv-6QBeYPHd-z/exec';
         let allData = [];
 
         window.onload = () => {
@@ -338,9 +338,15 @@
                     console.log("Total data tersedia:", allData.length);
                     console.log("Hasil filter:", filtered);
            
-                const filtered = allData.filter(d => {
+                /*const filtered = allData.filter(d => {
                     const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
                     return getQuarter(tgl) === selTW;
+                });*/
+
+               const filtered = allData.filter(d => {
+                    // Cukup akses kolom Triwulan langsung dari database
+                   const tw = String(d.Triwulan || d.triwulan); 
+                   return tw === selTW;
                 });
             
                 // 1. GAMBAR DAUN & RANTING DULU (Agar pohon tidak gundul meski kosong)
