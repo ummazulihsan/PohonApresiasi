@@ -498,8 +498,8 @@
             if(pgr === pnr) return alert("Ops! Anda tidak bisa mengirim apresiasi untuk diri sendiri. 😊");
             // 2. Validasi: Apakah nama ada di daftar karyawan?
             // .includes() mengecek apakah nilai ada di array daftarKaryawan
-            if (!daftarNama.includes(pgr) return alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar yang muncul.");
-            if (!daftarNama.includes(pnr) return alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar yang muncul.");
+            if (!daftarNama.includes(pgr)) return alert("Nama Pengirim tidak valid! Silakan pilih nama dari daftar yang muncul.");
+            if (!daftarNama.includes(pnr)) return alert("Nama Penerima tidak valid! Silakan pilih nama dari daftar yang muncul.");
         
             // 1. Dapatkan triwulan saat ini (waktu sekarang ketika tombol diklik)
             const currentMonth = new Date().getMonth() + 1;
