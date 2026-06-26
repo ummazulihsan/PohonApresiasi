@@ -283,28 +283,36 @@
             renderL(cPgr, 'leaderboard-pengirim', 'Kiriman');
         }
 
-        // Membaca Triwulan dari data waktu database secara akurat
-        function getQuarter(dateString) {
+       function getQuarter(dateString) {
             if (!dateString) return "1";
             
-            // Atasi jika data sudah berupa format ISO String bawaan javascript objek
-            if(dateString.includes('-')) {
+            // 1. Jika input sudah berupa objek Date atau string ISO (contoh: 2026-06-26...)
+            if (typeof dateString === 'string' && dateString.includes('-')) {
                 const month = new Date(dateString).getMonth() + 1;
                 if (month >= 4 && month <= 6) return "2";
                 if (month >= 7 && month <= 9) return "3";
                 if (month >= 10 && month <= 12) return "4";
                 return "1";
             }
+        
+            // 2. Jika formatnya string database biasa (contoh: 3/25/2026 atau 6/26/2026)
+            // Kita bersihkan dulu spasi di awal/akhir, lalu pecah berdasarkan "/"
+            const cleanStr = String(dateString).trim();
+            const parts = cleanStr.split('/');
             
-            // Format standard Sheet biasa (MM/DD/YYYY atau DD/MM/YYYY)
-            const parts = dateString.split('/');
             if (parts.length > 0) {
-                const month = parseInt(parts[0]);
-                if (month >= 4 && month <= 6) return "2";
-                if (month >= 7 && month <= 9) return "3";
-                if (month >= 10 && month <= 12) return "4";
+                // Mengambil angka pertama sebelum tanda "/" sebagai bulan
+                const month = parseInt(parts[0], 10); 
+                
+                if (month >= 1 && month <= 12) {
+                    if (month >= 4 && month <= 6) return "2";   // April - Juni -> TW 2
+                    if (month >= 7 && month <= 9) return "3";   // Juli - September -> TW 3
+                    if (month >= 10 && month <= 12) return "4"; // Oktober - Desember -> TW 4
+                    return "1";                                 // Januari - Maret -> TW 1
+                }
             }
-            return "1";
+            
+            return "1"; // Fallback default
         }
 
         function searchApple() {
@@ -331,7 +339,7 @@
 
             // Filter data murni per Triwulan terpilih
             const filtered = allData.filter(d => {
-                const tgl = d.Timestamp || d.timestamp;
+                const tgl = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
                 return getQuarter(tgl) === selTW;
             });
 
