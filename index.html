@@ -245,8 +245,8 @@
             // Pasang default select TW berdasarkan bulan saat ini secara real-time
             const currentMonth = new Date().getMonth() + 1; // 1-12
             let currentTW = "1";
-            if (currentMonth >= 4 && currentMonth <= 6) currentTW = "2";
-            else if (currentMonth >= 7 && currentMonth <= 9) currentTW = "3";
+            if (currentMonth >= 4 && currentMonth <= 7) currentTW = "2";
+            else if (currentMonth >= 8 && currentMonth <= 9) currentTW = "3";
             else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
             
             document.getElementById('tw-selector').value = currentTW;
@@ -342,8 +342,8 @@
                     // Jika elemen pertama > 12, kemungkinan itu DD/MM/YYYY, jadi bulan ada di index 1
                     const month = parseInt(parts[0], 10) > 12 ? parseInt(parts[1], 10) : parseInt(parts[0], 10);
                     
-                    if (month >= 4 && month <= 6) return "2";
-                    if (month >= 7 && month <= 9) return "3";
+                    if (month >= 4 && month <= 7) return "2";
+                    if (month >= 8 && month <= 9) return "3";
                     if (month >= 10 && month <= 12) return "4";
                     return "1";
                 }
@@ -351,8 +351,8 @@
                 // Jika valid, ambil bulan (0-11, jadi +1)
                 const month = date.getMonth() + 1;
             
-                if (month >= 4 && month <= 6) return "2";
-                if (month >= 7 && month <= 9) return "3";
+                if (month >= 4 && month <= 7) return "2";
+                if (month >= 8 && month <= 9) return "3";
                 if (month >= 10 && month <= 12) return "4";
                 return "1";
             }
@@ -519,8 +519,8 @@
             // 3. Logika Triwulan
             const currentMonth = new Date().getMonth() + 1;
             let currentTW = "1";
-            if (currentMonth >= 4 && currentMonth <= 6) currentTW = "2";
-            else if (currentMonth >= 7 && currentMonth <= 9) currentTW = "3";
+            if (currentMonth >= 4 && currentMonth <= 7) currentTW = "2";
+            else if (currentMonth >= 8 && currentMonth <= 9) currentTW = "3";
             else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
         
             // 4. Cek Duplikat (Pengirim, Penerima, Pesan, DAN Triwulan sama)
