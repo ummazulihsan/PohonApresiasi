@@ -522,29 +522,34 @@
             if (currentMonth >= 4 && currentMonth <= 7) currentTW = "2";
             else if (currentMonth >= 8 && currentMonth <= 9) currentTW = "3";
             else if (currentMonth >= 10 && currentMonth <= 12) currentTW = "4";
-        
-            // 4. Cek Duplikat (Pengirim, Penerima, Pesan, DAN Triwulan sama)
-            const pesanBaru = psn.toLowerCase().trim();
-        
-            const sudahPernah = allData.some(d => {
-                const pengirimSama = (d.Pengirim || d.pengirim) === pgr;
-                const penerimaSama = (d.Penerima || d.penerima) === pnr;
-                
-                // Cek Pesan
-                const pesanLama = (d.Ucapan || d.ucapan || "").toString().toLowerCase().trim();
-                const pesanSama = pesanLama === pesanBaru;
-        
-                // Cek Triwulan
-                const tglDataLama = d.Timestamp || d.timestamp;
-                const twDataLama = getQuarter(tglDataLama); 
-                
-                return pengirimSama && penerimaSama && pesanSama && (twDataLama === currentTW);
-            });
 
+            
+        // 4. Cek Duplikat (Pengirim dan Penerima sama di Triwulan yang sama)
+            const sudahPernah = allData.some(d => {
+                // 1. Bersihkan nama dari database
+                const namaPengirimDb = String(d.Pengirim || d.pengirim).trim().toLowerCase();
+                const namaPenerimaDb = String(d.Penerima || d.penerima).trim().toLowerCase();
+                
+                // 2. Bersihkan nama dari inputan form saat ini
+                const inputPengirim = String(pgr).trim().toLowerCase();
+                const inputPenerima = String(pnr).trim().toLowerCase();
+                
+                // 3. Cocokkan
+                const pengirimSama = namaPengirimDb === inputPengirim;
+                const penerimaSama = namaPenerimaDb === inputPenerima;
+                
+                // 4. Cek Triwulan (Pastikan keduanya dijadikan tipe data String agar tidak error)
+                const tglDataLama = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
+                const twDataLama = String(getQuarter(tglDataLama)); 
+                
+                // HAPUS pengecekan pesanSama. Cukup cek Pengirim, Penerima, dan TW.
+                return pengirimSama && penerimaSama && (twDataLama === String(currentTW));
+            });
+            
             console.log("Hasil pengecekan duplikat:", sudahPernah);
-        
-            if(sudahPernah) {
-                return alert(`Ops! Anda sudah pernah mengirimkan apresiasi yang sama kepada ${pnr} di Triwulan ${currentTW} ini.`);
+            
+            if (sudahPernah) {
+                return alert(`Ops! Anda sudah pernah mengirimkan apresiasi kepada ${pnr} di Triwulan ${currentTW} ini.`);
             }
         
             // 5. Eksekusi Kirim
