@@ -525,46 +525,46 @@
 
             
         // 4. Cek Duplikat (Pengirim dan Penerima sama di Triwulan yang sama)
-                   // 4.1. Tentukan TW saat ini secara manual dan pasti (Sesuai aturan Juli masuk TW 2)
-        const bulanIni = new Date().getMonth() + 1; // Mendapatkan bulan 1-12
-        let currentTW = "1";
-        if (bulanIni >= 4 && bulanIni <= 7) currentTW = "2";
-        else if (bulanIni >= 8 && bulanIni <= 9) currentTW = "3";
-        else if (bulanIni >= 10 && bulanIni <= 12) currentTW = "4";
-        
-        console.log("TW Hari Ini Adalah:", currentTW); // Cek di F12 -> Console
-        
-        // 4.2. Lakukan pengecekan ke semua data
-        const sudahPernah = allData.some(d => {
-            // Bersihkan nama agar huruf besar/kecil dan spasi berlebih tidak menipu sistem
-            const namaPengirimDb = String(d.Pengirim || d.pengirim).trim().toLowerCase();
-            const namaPenerimaDb = String(d.Penerima || d.penerima).trim().toLowerCase();
+           // 1. Tentukan TW saat ini menggunakan nama variabel baru (twSekarang) agar tidak bentrok
+            const bulanIni = new Date().getMonth() + 1; 
+            let twSekarang = "1";
+            if (bulanIni >= 4 && bulanIni <= 7) twSekarang = "2";
+            else if (bulanIni >= 8 && bulanIni <= 9) twSekarang = "3";
+            else if (bulanIni >= 10 && bulanIni <= 12) twSekarang = "4";
             
-            const inputPengirim = String(pgr).trim().toLowerCase();
-            const inputPenerima = String(pnr).trim().toLowerCase();
+            console.log("TW Hari Ini Adalah:", twSekarang); 
             
-            const pengirimSama = (namaPengirimDb === inputPengirim);
-            const penerimaSama = (namaPenerimaDb === inputPenerima);
+            // 2. Lakukan pengecekan ke semua data
+            const sudahPernah = allData.some(d => {
+                // Bersihkan nama agar huruf besar/kecil dan spasi berlebih tidak menipu sistem
+                const namaPengirimDb = String(d.Pengirim || d.pengirim).trim().toLowerCase();
+                const namaPenerimaDb = String(d.Penerima || d.penerima).trim().toLowerCase();
+                
+                const inputPengirim = String(pgr).trim().toLowerCase();
+                const inputPenerima = String(pnr).trim().toLowerCase();
+                
+                const pengirimSama = (namaPengirimDb === inputPengirim);
+                const penerimaSama = (namaPenerimaDb === inputPenerima);
+                
+                // Ambil TW dari data lama di database
+                const tglDataLama = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
+                const twDataLama = String(getQuarter(tglDataLama)); 
+                
+                // Cocokkan dengan twSekarang
+                const twSama = (twDataLama === twSekarang);
             
-            // Ambil TW dari data lama di database
-            const tglDataLama = d.Timestamp || d.timestamp || d.Tanggal || d.tanggal;
-            const twDataLama = String(getQuarter(tglDataLama)); 
+                // RADAR DEBUGGING: Muncul di F12 jika ada nama yang mirip
+                if (pengirimSama && penerimaSama) {
+                    console.log(`Menemukan data: ${namaPengirimDb} ke ${namaPenerimaDb}. TW Lama: ${twDataLama}, TW Sekarang: ${twSekarang}. TW sama? ${twSama}`);
+                }
             
-            const twSama = (twDataLama === currentTW);
-        
-            // RADAR DEBUGGING: Buka Console (F12) saat menekan tombol submit untuk melihat apa yang sedang dipikirkan sistem
-            if (pengirimSama && penerimaSama) {
-                console.log(`Menemukan data lama: ${namaPengirimDb} ke ${namaPenerimaDb}. TW Lama: ${twDataLama}, TW Sekarang: ${currentTW}. Apakah TW sama? ${twSama}`);
-            }
-        
-            // Hanya tolak jika PENGIRIM, PENERIMA, dan TRIWULAN-nya persis sama
-            return pengirimSama && penerimaSama && twSama;
-        });
-        
-        if (sudahPernah) {
-            alert(`Ops! Anda sudah pernah mengirimkan apresiasi kepada ${pnr} di Triwulan ${currentTW} ini.`);
-            return; // Hentikan eksekusi pengiriman
-        }
+                return pengirimSama && penerimaSama && twSama;
+            });
+            
+            if (sudahPernah) {
+                alert(`Ops! Anda sudah pernah mengirimkan apresiasi kepada ${pnr} di Triwulan ${twSekarang} ini.`);
+                return; // Hentikan eksekusi pengiriman
+            }        
         
             // 5. Eksekusi Kirim
             stat.innerText = "⏳ Sedang menggantungkan buah apresiasi...";
